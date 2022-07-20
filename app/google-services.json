@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1069880967512",
+    "project_id": "stream-anime-c5ba2",
+    "storage_bucket": "stream-anime-c5ba2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069880967512:android:22e9aac6ddf67d3e43e52d",
+        "android_client_info": {
+          "package_name": "com.example.streamanime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1069880967512-9tu943nt4t305ls647h5vl8sgtgfhgfa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgcay4wRaNBtHneq5XWa10ihjj2qoqeZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1069880967512-9tu943nt4t305ls647h5vl8sgtgfhgfa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

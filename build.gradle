@@ -6,9 +6,12 @@ buildscript {
         retrofit2Version = '2.9.0'
         timberVersion = '5.0.1'
     }
-
+    repositories {
+        google()
+    }
     dependencies {
         classpath "com.google.dagger:hilt-android-gradle-plugin:2.38.1"
+        classpath 'com.google.gms:google-services:4.3.13'
     }
 }
 

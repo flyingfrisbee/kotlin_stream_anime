@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/recentAnimeFragment">
+
+    <fragment
+        android:id="@+id/recentAnimeFragment"
+        android:name="com.example.streamanime.presentation.main_activity.fragments.recent_anime.RecentAnimeFragment"
+        android:label="fragment_recent_anime"
+        tools:layout="@layout/fragment_recent_anime" />
+    <fragment
+        android:id="@+id/bookmarkedAnimeFragment"
+        android:name="com.example.streamanime.presentation.main_activity.fragments.bookmarked_anime.BookmarkedAnimeFragment"
+        android:label="fragment_bookmarked_anime"
+        tools:layout="@layout/fragment_bookmarked_anime" />
+</navigation>

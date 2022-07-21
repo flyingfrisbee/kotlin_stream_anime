@@ -1,12 +1,10 @@
 package com.example.streamanime.data.remote
 
 import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
+import com.example.streamanime.data.remote.dto.request.UserTokenRequest
 import com.example.streamanime.data.remote.dto.response.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface AnimeServices {
 
@@ -30,4 +28,9 @@ interface AnimeServices {
     suspend fun getVideoUrl(
         @Path("endpoint") endpoint: String
     ): Response<GenericResponse<VideoUrlResponse>>
+
+    @POST("/user/create")
+    suspend fun sendUserToken(
+        @Body request: UserTokenRequest
+    ): Response<GenericResponse<Any?>>
 }

@@ -1,6 +1,7 @@
 package com.example.streamanime.domain.repository
 
 import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
+import com.example.streamanime.data.remote.dto.request.UserTokenRequest
 import com.example.streamanime.data.remote.dto.response.*
 import com.example.streamanime.domain.model.enumerate.Resource
 import retrofit2.Response
@@ -27,4 +28,8 @@ interface AnimeServicesRepository {
     suspend fun getVideoUrl(
         endpoint: String
     ): Resource<VideoUrlResponse>
+
+    suspend fun sendUserToken(
+        request: UserTokenRequest
+    ): Resource<Any?>
 }

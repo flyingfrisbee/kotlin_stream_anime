@@ -11,6 +11,5 @@ class FcmMessagingEvent : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.i("${message}")
     }
 }

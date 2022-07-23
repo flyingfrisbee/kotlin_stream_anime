@@ -1,6 +1,8 @@
 package com.example.streamanime.data.remote
 
 import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
+import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
+import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.UserTokenRequest
 import com.example.streamanime.data.remote.dto.response.*
 import retrofit2.Response
@@ -32,5 +34,15 @@ interface AnimeServices {
     @POST("/user/create")
     suspend fun sendUserToken(
         @Body request: UserTokenRequest
+    ): Response<GenericResponse<Any?>>
+
+    @POST("/bookmark/create")
+    suspend fun createBookmark(
+        @Body request: CreateBookmarkRequest
+    ): Response<GenericResponse<Any?>>
+
+    @DELETE("/bookmark/delete")
+    suspend fun deleteBookmark(
+        @Body request: DeleteBookmarkRequest
     ): Response<GenericResponse<Any?>>
 }

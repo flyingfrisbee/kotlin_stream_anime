@@ -1,35 +1,47 @@
 package com.example.streamanime.domain.repository
 
 import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
+import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
+import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.UserTokenRequest
 import com.example.streamanime.data.remote.dto.response.*
+import com.example.streamanime.domain.model.AnimeDetailData
+import com.example.streamanime.domain.model.RecentAnimeData
+import com.example.streamanime.domain.model.SearchTitleData
+import com.example.streamanime.domain.model.VideoUrlData
 import com.example.streamanime.domain.model.enumerate.Resource
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface AnimeServicesRepository {
 
     suspend fun getRecentAnimes(
         page: Int
-    ): Resource<List<RecentAnimeResponse>>
+    ): Flow<Resource<List<RecentAnimeData>>>
 
     suspend fun getSearchTitleResults(
         keyword: String
-    ): Resource<List<SearchTitleResponse>>
+    ): Flow<Resource<List<SearchTitleData>>>
 
     suspend fun getAnimeDetail(
         id: String,
         request: AnimeDetailRequest
-    ): Resource<AnimeDetailResponse>
+    ): Flow<Resource<AnimeDetailData>>
 
     suspend fun getVideoUrl(
         endpoint: String
-    ): Resource<VideoUrlResponse>
+    ): Flow<Resource<VideoUrlData>>
 
     suspend fun sendUserToken(
         request: UserTokenRequest
-    ): Resource<Any?>
+    ): Flow<Resource<Any?>>
+
+    suspend fun createBookmark(
+        request: CreateBookmarkRequest
+    ): Flow<Resource<Any?>>
+
+    suspend fun deleteBookmark(
+        request: DeleteBookmarkRequest
+    ): Flow<Resource<Any?>>
 }

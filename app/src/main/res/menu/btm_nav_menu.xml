@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/recentAnimeFragment" android:title="Recent" />
-    <item android:id="@+id/bookmarkedAnimeFragment" android:title="Bookmark" />
+    <item
+        android:id="@+id/recentAnimeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="Recent" />
+    <item
+        android:id="@+id/bookmarkedAnimeFragment"
+        android:icon="@drawable/ic_anime_bookmark"
+        android:title="Bookmark" />
 </menu>

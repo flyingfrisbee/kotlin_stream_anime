@@ -2,12 +2,10 @@ package com.example.streamanime.presentation.main_activity.fragments.recent_anim
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,13 +16,6 @@ import com.example.streamanime.core.utils.setToVisible
 import com.example.streamanime.databinding.FragmentRecentAnimeBinding
 import com.example.streamanime.presentation.main_activity.MainViewModel
 import com.example.streamanime.presentation.stream_activity.StreamActivity
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import javax.inject.Inject
 
 class RecentAnimeFragment
     : BaseFragment<FragmentRecentAnimeBinding>(),

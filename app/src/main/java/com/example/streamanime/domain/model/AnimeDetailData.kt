@@ -17,5 +17,6 @@ data class AnimeDetailData(
 
 data class EpisodeData(
     val episodeForEndpoint: String,
-    val episodeForUi: String
+    val episodeForUi: String,
+    var clicked: Boolean = false,
 )

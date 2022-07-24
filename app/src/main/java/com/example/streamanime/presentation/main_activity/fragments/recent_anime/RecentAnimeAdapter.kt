@@ -9,9 +9,11 @@ import com.bumptech.glide.Glide
 import com.example.streamanime.databinding.ItemRecentAnimeBinding
 import com.example.streamanime.domain.model.RecentAnimeData
 
-class RecentAnimeAdapter : RecyclerView.Adapter<RecentAnimeAdapter.ViewHolder>() {
+class RecentAnimeAdapter(
+    private val onRecentAnimeListener: OnRecentAnimeListener
+) : RecyclerView.Adapter<RecentAnimeAdapter.ViewHolder>() {
 
-    private val listContainer: MutableList<RecentAnimeData> = mutableListOf()
+    private val listContainer = mutableListOf<RecentAnimeData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -35,14 +37,24 @@ class RecentAnimeAdapter : RecyclerView.Adapter<RecentAnimeAdapter.ViewHolder>()
         notifyDataSetChanged()
     }
 
+    interface OnRecentAnimeListener {
+        fun onAnimeClicked(internalId: String)
+    }
+
     inner class ViewHolder(val binding: ItemRecentAnimeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: RecentAnimeData) {
             binding.apply {
                 data.apply {
+                    clParent.setOnClickListener {
+                        onRecentAnimeListener.onAnimeClicked(internalId)
+                    }
+
                     Glide.with(binding.root).load(imageUrl).into(ivRecentAnime)
                     tvTitle.text = title
-                    tvEpisode.text = latestEpisode
-                    tvUpdatedTimestamp.text = DateUtils.getRelativeTimeSpanString(updatedTimestamp, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+                    tvEpisode.text = "Episode $latestEpisode"
+
+                    val relativeTime = DateUtils.getRelativeTimeSpanString(updatedTimestamp, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+                    tvUpdatedTimestamp.text = "Updated $relativeTime"
                 }
             }
         }

@@ -10,11 +10,13 @@ import com.example.streamanime.core.utils.Constants
 import com.example.streamanime.core.utils.Constants.FCM_TOKEN
 import com.example.streamanime.data.remote.dto.request.UserTokenRequest
 import com.example.streamanime.domain.model.RecentAnimeData
+import com.example.streamanime.domain.model.SearchTitleData
 import com.example.streamanime.domain.model.enumerate.Resource
 import com.example.streamanime.domain.repository.AnimeServicesRepository
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -27,6 +29,7 @@ class MainViewModel @Inject constructor(
     private val repo: AnimeServicesRepository,
     private val sharedPref: SharedPreferences
 ) : ViewModel() {
+    private var searchJob: Job? = null
     val fcmService = FcmService()
 
     private val _isLoading = MutableLiveData(false)
@@ -42,6 +45,35 @@ class MainViewModel @Inject constructor(
     fun insertErrorMessage(text: String) = viewModelScope.launch {
         _errorMessage.value = text
         _errorMessage.value = ""
+    }
+
+    private val _titleResults = MutableLiveData<List<SearchTitleData>>()
+    val titleResults: LiveData<List<SearchTitleData>> = _titleResults
+
+    private fun getTitleResults(keyword: String) = viewModelScope.launch {
+        delay(1000L)
+        repo.getSearchTitleResults(keyword).collect { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    _titleResults.value = resource.data!!
+                }
+                is Resource.Error -> {
+                    _titleResults.value = emptyList()
+                    insertErrorMessage(resource.msg!!)
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun changeTitleResultsValue(value: List<SearchTitleData>) = viewModelScope.launch {
+        searchJob?.cancel()
+        _titleResults.value = value
+    }
+
+    fun startSearchJob(keyword: String) {
+        searchJob?.cancel()
+        searchJob = getTitleResults(keyword)
     }
 
     fun sendTokenToServer() = fcmService {

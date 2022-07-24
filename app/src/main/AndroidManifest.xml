@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:name=".StreamAnimeApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,16 +15,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StreamAnime"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.stream_activity.StreamActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize"/>
+        <activity
             android:name=".presentation.main_activity.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".core.fcm.FcmMessagingEvent"
             android:exported="false">

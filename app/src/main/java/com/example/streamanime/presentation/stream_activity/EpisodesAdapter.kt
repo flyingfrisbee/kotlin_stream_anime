@@ -23,7 +23,7 @@ class EpisodesAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(listContainer[position])
+        holder.bind(listContainer[position], position)
     }
 
     override fun getItemCount(): Int {
@@ -37,11 +37,11 @@ class EpisodesAdapter(
     }
 
     interface OnEpisodeClickListener {
-        fun onClicked(endpoint: String)
+        fun onClicked(endpoint: String, position: Int)
     }
 
     inner class ViewHolder(private val binding: ItemEpisodeBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: EpisodeData) {
+        fun bind(data: EpisodeData, position: Int) {
             binding.apply {
                 if (data.clicked) {
                     btnEpisode.setBackgroundColor(Color.parseColor("#FFC4C4"))
@@ -53,9 +53,11 @@ class EpisodesAdapter(
                     val index = listContainer.indexOfFirst { it.clicked }
                     if (index != -1) {
                         listContainer[index].clicked = false
+                        notifyItemChanged(index)
                     }
                     data.clicked = true
-                    onEpisodeClickListener.onClicked(data.episodeForEndpoint)
+                    notifyItemChanged(position)
+                    onEpisodeClickListener.onClicked(data.episodeForEndpoint, position)
                 }
             }
         }

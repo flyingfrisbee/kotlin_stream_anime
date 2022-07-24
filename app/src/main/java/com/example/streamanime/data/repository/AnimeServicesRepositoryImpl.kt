@@ -6,17 +6,13 @@ import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.UserTokenRequest
 import com.example.streamanime.data.remote.dto.response.*
-import com.example.streamanime.domain.model.AnimeDetailData
-import com.example.streamanime.domain.model.RecentAnimeData
-import com.example.streamanime.domain.model.SearchTitleData
-import com.example.streamanime.domain.model.VideoUrlData
 import com.example.streamanime.domain.model.enumerate.Resource
 import com.example.streamanime.domain.repository.AnimeServicesRepository
-import com.example.streamanime.mappers.toData
+import com.example.streamanime.data.mappers.toData
+import com.example.streamanime.domain.model.*
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import timber.log.Timber
 import javax.inject.Inject
 
 class AnimeServicesRepositoryImpl @Inject constructor(
@@ -178,6 +174,29 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data))
+                } else {
+                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                    emit(Resource.Error(errorResult.message))
+                }
+            }
+        }
+    }
+
+    override suspend fun bookmarkedAnimeWithUpdate(userToken: String): Flow<Resource<List<BookmarkedAnimeData>>> {
+        return flow {
+            emit(Resource.Loading())
+
+            val response = try {
+                api.bookmarkedAnimeWithUpdate(userToken)
+            } catch (e: Exception) {
+                emit(Resource.Error("No internet connection"))
+                null
+            }
+
+            response?.let {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    emit(Resource.Success(body.data.map { it.toData() }))
                 } else {
                     val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
                     emit(Resource.Error(errorResult.message))

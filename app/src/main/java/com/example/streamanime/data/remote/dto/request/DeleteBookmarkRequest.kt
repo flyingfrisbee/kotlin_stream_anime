@@ -1,6 +1,10 @@
 package com.example.streamanime.data.remote.dto.request
 
+import com.google.gson.annotations.SerializedName
+
 data class DeleteBookmarkRequest(
-    val internal_id: String,
-    val user_token: String
+    @SerializedName("internal_id")
+    val internalId: String,
+    @SerializedName("user_token")
+    val userToken: String
 )

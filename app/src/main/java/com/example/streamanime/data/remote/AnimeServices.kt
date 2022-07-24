@@ -41,8 +41,13 @@ interface AnimeServices {
         @Body request: CreateBookmarkRequest
     ): Response<GenericResponse<Any?>>
 
-    @DELETE("/bookmark/delete")
+    @POST("/bookmark/delete")
     suspend fun deleteBookmark(
         @Body request: DeleteBookmarkRequest
     ): Response<GenericResponse<Any?>>
+
+    @GET("/bookmark/update")
+    suspend fun bookmarkedAnimeWithUpdate(
+        @Query("token") userToken: String
+    ): Response<GenericResponse<List<BookmarkedAnimeResponse>>>
 }

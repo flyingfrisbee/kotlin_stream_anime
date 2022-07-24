@@ -20,7 +20,9 @@ data class AnimeDetailResponse(
     val title: String,
     val type: String,
     @SerializedName("updated_timestamp")
-    val updatedTimestamp: Long
+    val updatedTimestamp: Long,
+    @SerializedName("latest_episode")
+    val latestEpisode: String
 )
 
 data class Episode(

@@ -5,10 +5,7 @@ import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.UserTokenRequest
 import com.example.streamanime.data.remote.dto.response.*
-import com.example.streamanime.domain.model.AnimeDetailData
-import com.example.streamanime.domain.model.RecentAnimeData
-import com.example.streamanime.domain.model.SearchTitleData
-import com.example.streamanime.domain.model.VideoUrlData
+import com.example.streamanime.domain.model.*
 import com.example.streamanime.domain.model.enumerate.Resource
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
@@ -44,4 +41,8 @@ interface AnimeServicesRepository {
     suspend fun deleteBookmark(
         request: DeleteBookmarkRequest
     ): Flow<Resource<Any?>>
+
+    suspend fun bookmarkedAnimeWithUpdate(
+        @Query("token") userToken: String
+    ): Flow<Resource<List<BookmarkedAnimeData>>>
 }

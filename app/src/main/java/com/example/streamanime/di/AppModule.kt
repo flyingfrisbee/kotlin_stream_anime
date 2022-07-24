@@ -2,8 +2,11 @@ package com.example.streamanime.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
 import com.example.streamanime.R
 import com.example.streamanime.core.utils.Constants
+import com.example.streamanime.data.local.AnimeDatabase
+import com.example.streamanime.data.local.BookmarkDao
 import com.example.streamanime.data.remote.AnimeServices
 import dagger.Module
 import dagger.Provides
@@ -35,5 +38,25 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AnimeServices::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAnimeDatabase(
+        @ApplicationContext context: Context
+    ): AnimeDatabase {
+        return Room.databaseBuilder(
+            context,
+            AnimeDatabase::class.java,
+            "anime_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDao(
+        db: AnimeDatabase
+    ): BookmarkDao {
+        return db.dao
     }
 }

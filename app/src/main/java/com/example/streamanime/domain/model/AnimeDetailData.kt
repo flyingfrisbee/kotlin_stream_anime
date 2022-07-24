@@ -13,6 +13,7 @@ data class AnimeDetailData(
     val summary: String,
     val title: String,
     val type: String,
+    val latestEpisode: String,
 )
 
 data class EpisodeData(

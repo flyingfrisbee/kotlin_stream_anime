@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
             viewModel.apply {
+                btmNavView.setOnItemReselectedListener {}
+
                 btmNavView.setupWithNavController(navController)
 
                 errorMessage.observe(this@MainActivity) {

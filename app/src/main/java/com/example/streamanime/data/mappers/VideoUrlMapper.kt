@@ -1,4 +1,4 @@
-package com.example.streamanime.mappers
+package com.example.streamanime.data.mappers
 
 import com.example.streamanime.data.remote.dto.response.VideoUrlResponse
 import com.example.streamanime.domain.model.VideoUrlData

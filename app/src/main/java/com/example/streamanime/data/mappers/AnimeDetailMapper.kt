@@ -1,4 +1,4 @@
-package com.example.streamanime.mappers
+package com.example.streamanime.data.mappers
 
 import com.example.streamanime.data.remote.dto.response.AnimeDetailResponse
 import com.example.streamanime.data.remote.dto.response.Episode
@@ -16,7 +16,8 @@ fun AnimeDetailResponse.toData(): AnimeDetailData {
         releasedDate = releasedDate,
         summary = summary,
         title = title,
-        type = type
+        type = type,
+        latestEpisode = latestEpisode
     )
 }
 

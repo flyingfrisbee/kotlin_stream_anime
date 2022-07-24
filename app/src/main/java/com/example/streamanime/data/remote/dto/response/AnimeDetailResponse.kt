@@ -6,7 +6,7 @@ data class AnimeDetailResponse(
     @SerializedName("airing_status")
     val airingStatus: String,
     @SerializedName("anime_id")
-    val animeId: String,
+    val animeId: String? = null,
     @SerializedName("episode_list")
     val episodeList: List<Episode>,
     val genre: String,
@@ -20,7 +20,7 @@ data class AnimeDetailResponse(
     val title: String,
     val type: String,
     @SerializedName("updated_timestamp")
-    val updatedTimestamp: Int
+    val updatedTimestamp: Long
 )
 
 data class Episode(

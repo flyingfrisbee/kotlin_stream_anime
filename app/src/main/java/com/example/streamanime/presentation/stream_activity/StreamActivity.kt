@@ -27,7 +27,7 @@ import timber.log.Timber
 class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListener {
 
     private lateinit var binding: ActivityStreamBinding
-    private lateinit var adapter: EpisodesAdapter
+    private lateinit var mAdapter: EpisodesAdapter
     private val viewModel: StreamViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +42,8 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
 
                 animeDetail.observe(this@StreamActivity) {
                     populateDataToViews(it)
-                    adapter.populateData(it.episodeList)
+                    nestedScrollView.setToVisible()
+                    mAdapter.populateData(it.episodeList)
                 }
 
                 videoUrl.observe(this@StreamActivity) {
@@ -86,12 +87,11 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
     }
 
     private fun initializeRecyclerView() {
-        adapter = EpisodesAdapter(this)
+        mAdapter = EpisodesAdapter(this)
         binding.rvEpisodes.apply {
-            adapter = adapter
+            adapter = mAdapter
             layoutManager = GridLayoutManager(this@StreamActivity, 4)
             setHasFixedSize(true)
-            isNestedScrollingEnabled = false
         }
     }
 

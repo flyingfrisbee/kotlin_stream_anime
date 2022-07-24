@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AnimeDetailData(
     val airingStatus: String,
-    val animeId: String,
+    val animeId: String? = null,
     val episodeList: List<EpisodeData>,
     val genre: String,
     val imageUrl: String,

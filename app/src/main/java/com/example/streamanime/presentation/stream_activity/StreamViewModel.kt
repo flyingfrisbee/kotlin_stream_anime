@@ -11,13 +11,14 @@ import com.example.streamanime.domain.repository.AnimeServicesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class StreamViewModel @Inject constructor(
     private val repo: AnimeServicesRepository
 ) : ViewModel() {
-    private val _isLoading = MutableLiveData(false)
+    private val _isLoading = MutableLiveData(true)
     val isLoading: LiveData<Boolean> = _isLoading
 
     fun changeLoadingValue(loading: Boolean) = viewModelScope.launch {

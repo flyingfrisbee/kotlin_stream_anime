@@ -20,7 +20,7 @@ interface AnimeServices {
         @Query("keyword") keyword: String
     ): Response<GenericResponse<List<SearchTitleResponse>>>
 
-    @GET("/anime/{id}")
+    @POST("/anime/{id}")
     suspend fun getAnimeDetail(
         @Path("id") id: String,
         @Body request: AnimeDetailRequest

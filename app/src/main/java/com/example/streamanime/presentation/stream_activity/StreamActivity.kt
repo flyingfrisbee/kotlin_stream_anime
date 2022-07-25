@@ -44,6 +44,8 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
         binding = ActivityStreamBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        makeStatusBarTextVisible(true)
+
         binding.apply {
             viewModel.apply {
                 initializeRecyclerView()
@@ -241,5 +243,9 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
+    }
+
+    private fun makeStatusBarTextVisible(isLightUp: Boolean) {
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLightUp
     }
 }

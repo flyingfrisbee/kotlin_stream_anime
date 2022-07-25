@@ -3,10 +3,12 @@ package com.example.streamanime.presentation.main_activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.streamanime.R
+import com.example.streamanime.core.alarm.ExactAlarm
 import com.example.streamanime.databinding.ActivityMainBinding
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
@@ -30,6 +32,11 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.navHostMain) as NavHostFragment
         navController = navHostFragment.navController
 
+        makeStatusBarTextVisible(true)
+
+//        val exactAlarm = ExactAlarm(this)
+//        exactAlarm()
+
         binding.apply {
             viewModel.apply {
                 btmNavView.setOnItemReselectedListener {}
@@ -52,5 +59,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun makeStatusBarTextVisible(isLightUp: Boolean) {
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLightUp
     }
 }

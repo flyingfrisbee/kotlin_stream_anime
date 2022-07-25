@@ -5,6 +5,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:name=".StreamAnimeApplication"
         android:allowBackup="true"
@@ -38,6 +40,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver android:name=".core.alarm.AlarmReceiver" />
     </application>
 
 </manifest>

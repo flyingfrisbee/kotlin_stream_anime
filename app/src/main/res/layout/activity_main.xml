@@ -23,6 +23,8 @@
         android:id="@+id/btmNavView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:backgroundTint="#595959"
+        app:labelVisibilityMode="selected"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

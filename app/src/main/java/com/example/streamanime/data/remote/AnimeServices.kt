@@ -50,4 +50,7 @@ interface AnimeServices {
     suspend fun bookmarkedAnimeWithUpdate(
         @Query("token") userToken: String
     ): Response<GenericResponse<List<BookmarkedAnimeResponse>>>
+
+    @GET("/ping")
+    suspend fun pingServer(): Response<GenericResponse<Any>>
 }

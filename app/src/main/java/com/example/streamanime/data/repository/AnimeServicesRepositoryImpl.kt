@@ -204,4 +204,18 @@ class AnimeServicesRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun pingServer(): Resource<GenericResponse<Any>> {
+        return try {
+            val resource = api.pingServer()
+            val body = resource.body()
+            if (resource.isSuccessful && body != null) {
+                Resource.Success(body!!)
+            } else {
+                Resource.Error("Failed to ping server")
+            }
+        } catch (e: Exception) {
+            Resource.Error("No internet connection")
+        }
+    }
 }

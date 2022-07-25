@@ -108,9 +108,7 @@ class BookmarkedAnimeFragment : BaseFragment<FragmentBookmarkedAnimeBinding>(), 
                 ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvBookmarkAnimes)
 
                 bookmarkedAnimes.observe(viewLifecycleOwner) {
-                    if (it.isNotEmpty()) {
-                        adapter.populateData(it, getPosition())
-                    }
+                    adapter.populateData(it, getPosition())
                 }
 
                 bookmarkLoading.observe(viewLifecycleOwner) {

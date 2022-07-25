@@ -45,4 +45,6 @@ interface AnimeServicesRepository {
     suspend fun bookmarkedAnimeWithUpdate(
         @Query("token") userToken: String
     ): Flow<Resource<List<BookmarkedAnimeData>>>
+
+    suspend fun pingServer(): Resource<GenericResponse<Any>>
 }

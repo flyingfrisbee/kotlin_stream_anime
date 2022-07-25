@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import java.util.*
 
@@ -16,10 +17,8 @@ class ExactAlarm(
     private var alarmMgr: AlarmManager? = null
     val calendar: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
-//        set(Calendar.HOUR_OF_DAY, 23)
-//        set(Calendar.MINUTE, 30)
-        set(Calendar.HOUR_OF_DAY, 18)
-        set(Calendar.MINUTE, 44)
+        set(Calendar.HOUR_OF_DAY, 23)
+        set(Calendar.MINUTE, 20)
     }
 
     @SuppressLint("InlinedApi")
@@ -34,13 +33,11 @@ class ExactAlarm(
             )
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmMgr?.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                alarmIntent
-            )
-            Toast.makeText(context, "Success set alarm", Toast.LENGTH_SHORT).show()
-        }
+        alarmMgr?.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            alarmIntent
+        )
     }
 }

@@ -34,8 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         makeStatusBarTextVisible(true)
 
-//        val exactAlarm = ExactAlarm(this)
-//        exactAlarm()
+        initAlarm()
 
         binding.apply {
             viewModel.apply {
@@ -63,5 +62,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun makeStatusBarTextVisible(isLightUp: Boolean) {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLightUp
+    }
+
+    private fun initAlarm() {
+        val exactAlarm = ExactAlarm(this)
+        exactAlarm()
     }
 }

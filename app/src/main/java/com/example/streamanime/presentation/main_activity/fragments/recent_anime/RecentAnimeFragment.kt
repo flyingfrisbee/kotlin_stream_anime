@@ -38,7 +38,7 @@ class RecentAnimeFragment
     override fun onViewCreated() {
         binding!!.apply {
             viewModel.apply {
-                initializeSearchRecylcerView()
+                initializeSearchRecyclerView()
                 initializeRecentAnimeRecyclerView()
                 setListenersToACTV()
 
@@ -100,7 +100,7 @@ class RecentAnimeFragment
         startActivity(intent)
     }
 
-    private fun initializeSearchRecylcerView() {
+    private fun initializeSearchRecyclerView() {
         searchAdapter = SearchAnimeAdapter(this)
         binding!!.apply {
             rvSearchResult.adapter = searchAdapter

@@ -41,6 +41,15 @@ class MainActivity : AppCompatActivity() {
                         Snackbar.make(root, it, Snackbar.LENGTH_SHORT).show()
                     }
                 }
+
+                bookmarkedAnimes.observe(this@MainActivity) {
+                    val animeWithUpdates = it.count { it.haveNewUpdate }
+                    if (animeWithUpdates == 0) {
+                        btmNavView.removeBadge(R.id.bookmarkedAnimeFragment)
+                        return@observe
+                    }
+                    btmNavView.getOrCreateBadge(R.id.bookmarkedAnimeFragment).number = animeWithUpdates
+                }
             }
         }
     }

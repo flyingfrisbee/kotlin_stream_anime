@@ -173,6 +173,7 @@ class MainViewModel @Inject constructor(
                                 localRepo.insertBookmarkAnime(it)
                             }
                         }
+                        getBookmarkedAnime()
                     }
                     is Resource.Error -> {
                         insertErrorMessage(resource.msg!!)

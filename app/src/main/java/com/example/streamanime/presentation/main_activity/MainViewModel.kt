@@ -153,7 +153,7 @@ class MainViewModel @Inject constructor(
 
     // bookmarked anime fragment
 
-    private val _bookmarkLoading = MutableLiveData(true)
+    private val _bookmarkLoading = MutableLiveData(false)
     val bookmarkLoading: LiveData<Boolean> = _bookmarkLoading
 
     private val _bookmarkedAnimes = MutableLiveData<List<BookmarkedAnimeData>>(emptyList())
@@ -177,7 +177,7 @@ class MainViewModel @Inject constructor(
                     is Resource.Error -> {
                         insertErrorMessage(resource.msg!!)
                     }
-                    else -> { _bookmarkLoading.value = true }
+                    else -> {}
                 }
             }
             delay(500L)

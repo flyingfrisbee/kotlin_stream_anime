@@ -150,6 +150,7 @@ class StreamViewModel @Inject constructor(
     var turnOffAdsCheckingJob: Job? = null
 
     fun startTurnOffAdsCheckingJob() {
+        adsChecking = true
         turnOffAdsCheckingJob?.cancel()
         turnOffAdsCheckingJob = viewModelScope.launch {
             delay(120000L)

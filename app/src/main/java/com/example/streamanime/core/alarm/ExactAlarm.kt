@@ -18,7 +18,7 @@ class ExactAlarm(
     val calendar: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
         set(Calendar.HOUR_OF_DAY, 23)
-        set(Calendar.MINUTE, 20)
+        set(Calendar.MINUTE, 30)
     }
 
     @SuppressLint("InlinedApi")
@@ -33,10 +33,9 @@ class ExactAlarm(
             )
         }
 
-        alarmMgr?.setInexactRepeating(
+        alarmMgr?.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
             alarmIntent
         )
     }

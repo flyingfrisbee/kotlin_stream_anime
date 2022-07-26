@@ -96,7 +96,7 @@ class StreamViewModel @Inject constructor(
             remoteRepo.createBookmark(
                 CreateBookmarkRequest(
                     internalId = internalId,
-                    latestEpisode = episodeList.last().episodeForUi,
+                    latestEpisode = if (episodeList.isNotEmpty()) episodeList.last().episodeForUi else "0",
                     userToken = sharedPref.getString(FCM_TOKEN, null) ?: ""
                 )
             ).collect { resource ->

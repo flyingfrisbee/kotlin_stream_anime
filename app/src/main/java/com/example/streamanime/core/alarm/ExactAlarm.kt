@@ -5,9 +5,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
-import android.widget.Toast
 import java.util.*
 
 class ExactAlarm(
@@ -15,11 +12,6 @@ class ExactAlarm(
 ) {
     private lateinit var alarmIntent: PendingIntent
     private var alarmMgr: AlarmManager? = null
-    val calendar: Calendar = Calendar.getInstance().apply {
-        timeInMillis = System.currentTimeMillis()
-        set(Calendar.HOUR_OF_DAY, 23)
-        set(Calendar.MINUTE, 30)
-    }
 
     @SuppressLint("InlinedApi")
     operator fun invoke() {
@@ -35,8 +27,28 @@ class ExactAlarm(
 
         alarmMgr?.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
+            getTimeInMillisForAlarm(),
             alarmIntent
         )
+    }
+
+    private fun getTimeInMillisForAlarm(): Long {
+        val currentTime = System.currentTimeMillis()
+        val appointedTime = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 30)
+        }.timeInMillis
+
+        if (currentTime < appointedTime) {
+            return appointedTime
+        }
+
+        val newAppointedTime = GregorianCalendar().apply {
+            add(Calendar.DATE, 1)
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 30)
+        }.timeInMillis
+
+        return newAppointedTime
     }
 }

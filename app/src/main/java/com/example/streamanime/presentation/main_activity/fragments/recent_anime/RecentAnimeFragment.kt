@@ -93,7 +93,11 @@ class RecentAnimeFragment
 
     override fun onAnimeClicked(internalId: String) {
         clearACTV()
-        viewModel.updateField(internalId)
+        viewModel.apply {
+            updateField(internalId) {
+                getBookmarkedAnime()
+            }
+        }
         val intent = Intent(requireContext(), StreamActivity::class.java)
         intent.putExtra(Constants.ID, internalId)
         intent.putExtra(Constants.IS_INTERNAL_ID, true)

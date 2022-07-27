@@ -234,8 +234,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updateField(internalId: String) = viewModelScope.launch {
+    fun updateField(internalId: String, onSuccess: () -> Unit) = viewModelScope.launch {
         localRepo.updateField(internalId)
+        onSuccess()
         _bookmarkLoading.value = false
     }
 

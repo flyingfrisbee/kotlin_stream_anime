@@ -45,7 +45,7 @@
             </intent-filter>
         </service>
 
-        <service android:name=".core.alarm.PingServerService" />
+        <service android:name=".core.service.PingServerService" />
 
         <receiver android:name=".core.alarm.AlarmReceiver" />
     </application>

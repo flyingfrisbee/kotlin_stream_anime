@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private val viewModel: MainViewModel by viewModels()
+    @Inject
+    lateinit var launchExactAlarm: ExactAlarm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         makeStatusBarTextVisible(true)
 
-        initAlarm()
+        launchExactAlarm()
 
         binding.apply {
             viewModel.apply {
@@ -62,10 +65,5 @@ class MainActivity : AppCompatActivity() {
 
     private fun makeStatusBarTextVisible(isLightUp: Boolean) {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = isLightUp
-    }
-
-    private fun initAlarm() {
-        val exactAlarm = ExactAlarm(this)
-        exactAlarm()
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.streamanime.R
+import com.example.streamanime.core.alarm.ExactAlarm
 import com.example.streamanime.core.utils.Constants
 import com.example.streamanime.data.local.AnimeDatabase
 import com.example.streamanime.data.local.BookmarkDao
@@ -28,6 +29,14 @@ object AppModule {
     ): SharedPreferences {
         val key = context.getString(R.string.shared_preference_instance_key)
         return context.getSharedPreferences(key, Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExactAlarm(
+        @ApplicationContext context: Context
+    ): ExactAlarm {
+        return ExactAlarm(context)
     }
 
     @Provides

@@ -46,5 +46,9 @@ interface AnimeServicesRepository {
         @Query("token") userToken: String
     ): Flow<Resource<List<BookmarkedAnimeData>>>
 
+    suspend fun updateBookmarkedAnimeLatestEpisode(
+        request: CreateBookmarkRequest
+    ): Flow<Resource<Any?>>
+
     suspend fun pingServer(): Resource<GenericResponse<Any>>
 }

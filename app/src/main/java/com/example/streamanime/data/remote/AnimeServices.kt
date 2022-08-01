@@ -51,6 +51,11 @@ interface AnimeServices {
         @Query("token") userToken: String
     ): Response<GenericResponse<List<BookmarkedAnimeResponse>>>
 
+    @POST("/bookmark/update")
+    suspend fun updateBookmarkedAnimeLatestEpisode(
+        @Body request: CreateBookmarkRequest
+    ): Response<GenericResponse<Any?>>
+
     @GET("/ping")
     suspend fun pingServer(): Response<GenericResponse<Any>>
 }

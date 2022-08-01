@@ -235,9 +235,33 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateField(internalId: String, onSuccess: () -> Unit) = viewModelScope.launch {
-        localRepo.updateField(internalId)
-        onSuccess()
-        _bookmarkLoading.value = false
+        _bookmarkLoading.value = true
+
+        bookmarkedAnimes.value?.let { animes ->
+            val anime = animes.find { it.internalId == internalId }
+            anime?.let {
+                remoteRepo.updateBookmarkedAnimeLatestEpisode(
+                    CreateBookmarkRequest(
+                        internalId = it.internalId,
+                        latestEpisode = it.latestEpisode,
+                        userToken = sharedPref.getString(FCM_TOKEN, null) ?: ""
+                    )
+                ).collect { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            localRepo.updateField(internalId)
+                            _bookmarkLoading.value = false
+                            onSuccess()
+                        }
+                        is Resource.Error -> {
+                            _bookmarkLoading.value = false
+                            insertErrorMessage(resource.msg!!)
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
     }
 
     private val background = ColorDrawable(Color.parseColor("#80D5D5D5"))

@@ -205,6 +205,29 @@ class AnimeServicesRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateBookmarkedAnimeLatestEpisode(request: CreateBookmarkRequest): Flow<Resource<Any?>> {
+        return flow {
+            emit(Resource.Loading())
+
+            val response = try {
+                api.updateBookmarkedAnimeLatestEpisode(request)
+            } catch (e: Exception) {
+                emit(Resource.Error("No internet connection"))
+                null
+            }
+
+            response?.let {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    emit(Resource.Success(body.data))
+                } else {
+                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                    emit(Resource.Error(errorResult.message))
+                }
+            }
+        }
+    }
+
     override suspend fun pingServer(): Resource<GenericResponse<Any>> {
         return try {
             val resource = api.pingServer()

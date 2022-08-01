@@ -129,12 +129,12 @@ class BookmarkedAnimeFragment : BaseFragment<FragmentBookmarkedAnimeBinding>(), 
     }
 
     override fun onBookmarkClicked(data: BookmarkedAnimeData) {
-        viewModel.updateField(data.internalId) {}
-
-        val intent = Intent(requireContext(), StreamActivity::class.java)
-        intent.putExtra(Constants.ID, data.internalId)
-        intent.putExtra(Constants.IS_INTERNAL_ID, true)
-        startActivity(intent)
+        viewModel.updateField(data.internalId) {
+            val intent = Intent(requireContext(), StreamActivity::class.java)
+            intent.putExtra(Constants.ID, data.internalId)
+            intent.putExtra(Constants.IS_INTERNAL_ID, true)
+            startActivity(intent)
+        }
     }
 
     private fun initializeRecyclerView() {

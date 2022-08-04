@@ -250,17 +250,16 @@ class MainViewModel @Inject constructor(
                     when (resource) {
                         is Resource.Success -> {
                             localRepo.updateField(internalId)
-                            _bookmarkLoading.value = false
                             onSuccess()
                         }
                         is Resource.Error -> {
-                            _bookmarkLoading.value = false
                             insertErrorMessage(resource.msg!!)
                         }
                         else -> {}
                     }
                 }
             }
+            _bookmarkLoading.value = false
         }
     }
 

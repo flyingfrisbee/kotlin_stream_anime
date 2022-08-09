@@ -135,6 +135,7 @@ class StreamViewModel @Inject constructor(
         "exp=",
         "expiry=",
         ".m3u8",
+        ".ts"
     )
     val initialSize = nonAds.size
 

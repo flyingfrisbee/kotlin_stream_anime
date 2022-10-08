@@ -61,6 +61,7 @@ dependencies {
     // Retrofit2
     implementation "com.squareup.retrofit2:retrofit:$retrofit2Version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit2Version"
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
     // Timber
     implementation "com.jakewharton.timber:timber:$timberVersion"

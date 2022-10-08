@@ -34,8 +34,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data.map { it.toData() }))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -57,8 +59,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data.map { it.toData() }))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -83,8 +87,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data.toData()))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -106,8 +112,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data.toData()))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -129,8 +137,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -152,8 +162,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -175,8 +187,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -198,8 +212,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data.map { it.toData() }))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }
@@ -221,8 +237,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                 if (response.isSuccessful && body != null) {
                     emit(Resource.Success(body.data))
                 } else {
-                    val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                    emit(Resource.Error(errorResult.message))
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
                 }
             }
         }

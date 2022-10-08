@@ -3,6 +3,7 @@ package com.example.streamanime.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.example.streamanime.BuildConfig
 import com.example.streamanime.R
 import com.example.streamanime.core.alarm.ExactAlarm
 import com.example.streamanime.core.utils.Constants
@@ -14,6 +15,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -42,8 +45,20 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAnimeApi(): AnimeServices {
+        val okHttpBuilder = OkHttpClient.Builder()
+
+        if (BuildConfig.DEBUG) {
+            val logging = HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BODY)
+
+            okHttpBuilder.addInterceptor(logging)
+        }
+
+        okHttpBuilder.addInterceptor(handleRedirectInterceptor())
+
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
+            .client(okHttpBuilder.build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AnimeServices::class.java)

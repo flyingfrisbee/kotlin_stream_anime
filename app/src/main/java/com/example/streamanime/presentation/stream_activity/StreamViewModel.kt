@@ -129,13 +129,9 @@ class StreamViewModel @Inject constructor(
     var adsChecking = true
     var alreadyGotHostUrl = false
     val nonAds = mutableListOf(
-        "jwpcdn",
-        "movcloud",
-        "stream",
-        "exp=",
-        "expiry=",
+        ".ts",
         ".m3u8",
-        ".ts"
+        "jwpcdn"
     )
     val initialSize = nonAds.size
 

@@ -128,6 +128,8 @@ class StreamViewModel @Inject constructor(
     var currentSelectedEpisodeIndex = -1
     var adsChecking = true
     var alreadyGotHostUrl = false
+    var alreadyGotCdnURL = false
+
     val nonAds = mutableListOf(
         ".ts",
         ".mp4",

@@ -71,6 +71,11 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
 
                 videoUrl.observe(this@StreamActivity) {
                     if (it.isNotBlank()) {
+                        webView.stopLoading()
+                        alreadyGotCdnURL = false
+                        if (nonAds.size == initialSize + 2) {
+                            nonAds.removeLast()
+                        }
                         webView.loadUrl(it)
                         startTurnOffAdsCheckingJob()
                     }
@@ -150,14 +155,22 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
                         view: WebView?,
                         request: WebResourceRequest
                     ): WebResourceResponse? {
+                        val url = request.url.toString()
                         //added the host URL to -> list of non ads
-                        if (!alreadyGotHostUrl && nonAds.size <= initialSize && request.url.toString().contains("streaming")) {
-                            val url = request.url.toString().replace("https://", "")
-                            nonAds.add(url.subSequence(0, url.indexOf("/")).toString())
+                        if (!alreadyGotHostUrl && nonAds.size <= initialSize && url.contains("streaming")) {
+                            val processedURL = url.replace("https://", "")
+                            nonAds.add(processedURL.subSequence(0, processedURL.indexOf("/")).toString())
                             alreadyGotHostUrl = true
                         }
 
-                        if (adsChecking && isAdsURL(request.url.toString())) {
+                        // save the cdn address
+                        if (!alreadyGotCdnURL && url.contains(".m3u8")) {
+                            val processedURL = url.replace("https://", "")
+                            nonAds.add(processedURL.subSequence(0, processedURL.indexOf("/")).toString())
+                            alreadyGotCdnURL = true
+                        }
+
+                        if (adsChecking && isAdsURL(url)) {
                             return WebResourceResponse("text/plain", "utf-8", null)
                         }
 

@@ -5,12 +5,10 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(indices = [Index(value = ["internal_id"], unique = true)])
+@Entity
 data class BookmarkedAnimeData(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
-    @ColumnInfo(name = "internal_id")
-    val internalId: String,
+    @PrimaryKey(autoGenerate = false)
+    val id: Int,
     val title: String,
     val imageUrl: String,
     val latestEpisode: String,

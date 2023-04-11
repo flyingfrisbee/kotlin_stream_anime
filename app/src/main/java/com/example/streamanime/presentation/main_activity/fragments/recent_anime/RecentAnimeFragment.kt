@@ -83,24 +83,23 @@ class RecentAnimeFragment
         }
     }
 
-    override fun onTitleClicked(animeId: String) {
+    override fun onTitleClicked(title: String, endpoint: String) {
         clearACTV()
         val intent = Intent(requireContext(), StreamActivity::class.java)
-        intent.putExtra(Constants.ID, animeId)
-        intent.putExtra(Constants.IS_INTERNAL_ID, false)
+        intent.putExtra(Constants.DETAIL_ALT_TITLE, title)
+        intent.putExtra(Constants.DETAIL_ALT_ENDPOINT, endpoint)
         startActivity(intent)
     }
 
-    override fun onAnimeClicked(internalId: String) {
+    override fun onAnimeClicked(id: Int) {
         clearACTV()
         viewModel.apply {
-            updateField(internalId) {
+            updateField(id) {
                 getBookmarkedAnime()
             }
         }
         val intent = Intent(requireContext(), StreamActivity::class.java)
-        intent.putExtra(Constants.ID, internalId)
-        intent.putExtra(Constants.IS_INTERNAL_ID, true)
+        intent.putExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, id)
         startActivity(intent)
     }
 

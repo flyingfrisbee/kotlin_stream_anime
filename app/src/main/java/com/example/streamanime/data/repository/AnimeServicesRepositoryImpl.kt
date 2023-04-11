@@ -1,14 +1,10 @@
 package com.example.streamanime.data.repository
 
 import com.example.streamanime.data.remote.AnimeServices
-import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
-import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
-import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
-import com.example.streamanime.data.remote.dto.request.UserTokenRequest
+import com.example.streamanime.data.remote.dto.request.*
 import com.example.streamanime.data.remote.dto.response.*
 import com.example.streamanime.domain.model.enumerate.Resource
 import com.example.streamanime.domain.repository.AnimeServicesRepository
-import com.example.streamanime.data.mappers.toData
 import com.example.streamanime.domain.model.*
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +14,31 @@ import javax.inject.Inject
 class AnimeServicesRepositoryImpl @Inject constructor(
     private val api: AnimeServices
 ) : AnimeServicesRepository {
+    override suspend fun registerUser(req: UserTokenRequest): Flow<Resource<UserTokenData>> {
+        return flow {
+            emit(Resource.Loading())
+
+            val response = try {
+                api.registerUser(req)
+            } catch (e: Exception) {
+                emit(Resource.Error("No internet connection"))
+                null
+            }
+
+            response?.let {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    emit(Resource.Success(body.data))
+                } else {
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
+                }
+            }
+        }
+    }
+
     override suspend fun getRecentAnimes(page: Int): Flow<Resource<List<RecentAnimeData>>> {
         return flow {
             emit(Resource.Loading())
@@ -32,7 +53,10 @@ class AnimeServicesRepositoryImpl @Inject constructor(
             response?.let {
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
-                    emit(Resource.Success(body.data.map { it.toData() }))
+                    for (anime in body.data) {
+                        anime.getTimestamp()
+                    }
+                    emit(Resource.Success(body.data))
                 } else {
                     try {
                         val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
@@ -43,12 +67,12 @@ class AnimeServicesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSearchTitleResults(keyword: String): Flow<Resource<List<SearchTitleData>>> {
+    override suspend fun getSearchTitleResults(keywords: String): Flow<Resource<List<SearchTitleData>>> {
         return flow {
             emit(Resource.Loading())
 
             val response = try {
-                api.getSearchTitleResults(keyword)
+                api.getSearchTitleResults(keywords)
             } catch (e: Exception) {
                 emit(Resource.Error("No internet connection"))
                 null
@@ -57,7 +81,34 @@ class AnimeServicesRepositoryImpl @Inject constructor(
             response?.let {
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
-                    emit(Resource.Success(body.data.map { it.toData() }))
+                    emit(Resource.Success(body.data))
+                } else {
+                    try {
+                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
+                        emit(Resource.Error(errorResult.message))
+                    } catch (e: Exception) {}
+                }
+            }
+        }
+    }
+
+    override suspend fun getAnimeDetailAlt(
+        request: AnimeDetailAltRequest
+    ): Flow<Resource<AnimeDetailData>> {
+        return flow {
+            emit(Resource.Loading())
+
+            val response = try {
+                api.getAnimeDetailAlt(request)
+            } catch (e: Exception) {
+                emit(Resource.Error("No internet connection"))
+                null
+            }
+
+            response?.let {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    emit(Resource.Success(body.data))
                 } else {
                     try {
                         val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
@@ -69,14 +120,13 @@ class AnimeServicesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAnimeDetail(
-        id: String,
-        request: AnimeDetailRequest
+        animeID: Int
     ): Flow<Resource<AnimeDetailData>> {
         return flow {
             emit(Resource.Loading())
 
             val response = try {
-                api.getAnimeDetail(id, request)
+                api.getAnimeDetail(animeID)
             } catch (e: Exception) {
                 emit(Resource.Error("No internet connection"))
                 null
@@ -85,7 +135,8 @@ class AnimeServicesRepositoryImpl @Inject constructor(
             response?.let {
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
-                    emit(Resource.Success(body.data.toData()))
+                    body.data.getTimestamp()
+                    emit(Resource.Success(body.data))
                 } else {
                     try {
                         val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
@@ -96,37 +147,12 @@ class AnimeServicesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getVideoUrl(endpoint: String): Flow<Resource<VideoUrlData>> {
+    override suspend fun getVideoUrl(request: VideoURLRequest): Flow<Resource<VideoUrlData>> {
         return flow {
             emit(Resource.Loading())
 
             val response = try {
-                api.getVideoUrl(endpoint)
-            } catch (e: Exception) {
-                emit(Resource.Error("No internet connection"))
-                null
-            }
-
-            response?.let {
-                val body = response.body()
-                if (response.isSuccessful && body != null) {
-                    emit(Resource.Success(body.data.toData()))
-                } else {
-                    try {
-                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                        emit(Resource.Error(errorResult.message))
-                    } catch (e: Exception) {}
-                }
-            }
-        }
-    }
-
-    override suspend fun sendUserToken(request: UserTokenRequest): Flow<Resource<Any?>> {
-        return flow {
-            emit(Resource.Loading())
-
-            val response = try {
-                api.sendUserToken(request)
+                api.getVideoUrl(request)
             } catch (e: Exception) {
                 emit(Resource.Error("No internet connection"))
                 null
@@ -210,7 +236,7 @@ class AnimeServicesRepositoryImpl @Inject constructor(
             response?.let {
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
-                    emit(Resource.Success(body.data.map { it.toData() }))
+                    emit(Resource.Success(body.data))
                 } else {
                     try {
                         val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
@@ -243,20 +269,6 @@ class AnimeServicesRepositoryImpl @Inject constructor(
                     } catch (e: Exception) {}
                 }
             }
-        }
-    }
-
-    override suspend fun pingServer(): Resource<GenericResponse<Any>> {
-        return try {
-            val resource = api.pingServer()
-            val body = resource.body()
-            if (resource.isSuccessful && body != null) {
-                Resource.Success(body!!)
-            } else {
-                Resource.Error("Failed to ping server")
-            }
-        } catch (e: Exception) {
-            Resource.Error("No internet connection")
         }
     }
 }

@@ -8,6 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.streamanime.databinding.ItemRecentAnimeBinding
 import com.example.streamanime.domain.model.RecentAnimeData
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.*
 
 class RecentAnimeAdapter(
     private val onRecentAnimeListener: OnRecentAnimeListener
@@ -38,7 +45,7 @@ class RecentAnimeAdapter(
     }
 
     interface OnRecentAnimeListener {
-        fun onAnimeClicked(internalId: String)
+        fun onAnimeClicked(id: Int)
     }
 
     inner class ViewHolder(val binding: ItemRecentAnimeBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -46,15 +53,13 @@ class RecentAnimeAdapter(
             binding.apply {
                 data.apply {
                     clParent.setOnClickListener {
-                        onRecentAnimeListener.onAnimeClicked(internalId)
+                        onRecentAnimeListener.onAnimeClicked(id)
                     }
 
                     Glide.with(binding.root).load(imageUrl).into(ivRecentAnime)
                     tvTitle.text = title
                     tvEpisode.text = "Episode $latestEpisode"
-
-                    val relativeTime = DateUtils.getRelativeTimeSpanString(updatedTimestamp, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
-                    tvUpdatedTimestamp.text = "Updated $relativeTime"
+                    tvUpdatedTimestamp.text = "Updated $updatedAtTimestamp"
                 }
             }
         }

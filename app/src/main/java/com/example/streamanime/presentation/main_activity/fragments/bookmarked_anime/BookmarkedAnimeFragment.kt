@@ -129,10 +129,9 @@ class BookmarkedAnimeFragment : BaseFragment<FragmentBookmarkedAnimeBinding>(), 
     }
 
     override fun onBookmarkClicked(data: BookmarkedAnimeData) {
-        viewModel.updateField(data.internalId) {
+        viewModel.updateField(data.id) {
             val intent = Intent(requireContext(), StreamActivity::class.java)
-            intent.putExtra(Constants.ID, data.internalId)
-            intent.putExtra(Constants.IS_INTERNAL_ID, true)
+            intent.putExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, id)
             startActivity(intent)
         }
     }

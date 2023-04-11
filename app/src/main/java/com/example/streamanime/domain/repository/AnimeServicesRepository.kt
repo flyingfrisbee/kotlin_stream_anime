@@ -1,9 +1,6 @@
 package com.example.streamanime.domain.repository
 
-import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
-import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
-import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
-import com.example.streamanime.data.remote.dto.request.UserTokenRequest
+import com.example.streamanime.data.remote.dto.request.*
 import com.example.streamanime.data.remote.dto.response.*
 import com.example.streamanime.domain.model.*
 import com.example.streamanime.domain.model.enumerate.Resource
@@ -13,26 +10,29 @@ import retrofit2.http.*
 
 interface AnimeServicesRepository {
 
+    suspend fun registerUser(
+        req: UserTokenRequest
+    ): Flow<Resource<UserTokenData>>
+
     suspend fun getRecentAnimes(
         page: Int
     ): Flow<Resource<List<RecentAnimeData>>>
 
     suspend fun getSearchTitleResults(
-        keyword: String
+        keywords: String
     ): Flow<Resource<List<SearchTitleData>>>
 
+    suspend fun getAnimeDetailAlt(
+        request: AnimeDetailAltRequest
+    ): Flow<Resource<AnimeDetailData>>
+
     suspend fun getAnimeDetail(
-        id: String,
-        request: AnimeDetailRequest
+        animeID: Int
     ): Flow<Resource<AnimeDetailData>>
 
     suspend fun getVideoUrl(
-        endpoint: String
+        request: VideoURLRequest
     ): Flow<Resource<VideoUrlData>>
-
-    suspend fun sendUserToken(
-        request: UserTokenRequest
-    ): Flow<Resource<Any?>>
 
     suspend fun createBookmark(
         request: CreateBookmarkRequest
@@ -49,6 +49,4 @@ interface AnimeServicesRepository {
     suspend fun updateBookmarkedAnimeLatestEpisode(
         request: CreateBookmarkRequest
     ): Flow<Resource<Any?>>
-
-    suspend fun pingServer(): Resource<GenericResponse<Any>>
 }

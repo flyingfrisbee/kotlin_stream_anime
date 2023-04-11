@@ -53,20 +53,23 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
                 retrieveIntentData()
 
                 fabBookmark.setOnClickListener {
-                    bookmarkAnime()
+                    val canBookmark = (animeID != -1)
+                    if (canBookmark) {
+                        bookmarkAnime()
+                    }
                 }
 
                 animeDetail.observe(this@StreamActivity) {
-                    val previouslyWatchedEpisode = sharedPref.getInt(it.internalId, -2)
+                    val previouslyWatchedEpisode = sharedPref.getInt(it.id.toString(), -2)
                     if (previouslyWatchedEpisode != -2) {
-                        val episode = it.episodeList[previouslyWatchedEpisode]
+                        val episode = it.episodes[previouslyWatchedEpisode]
                         episode.clicked = true
-                        updateDataAndLoadVideo(episode.episodeForEndpoint, previouslyWatchedEpisode)
+                        updateDataAndLoadVideo(episode.endpoint, previouslyWatchedEpisode)
                     }
 
                     populateDataToViews(it)
                     nestedScrollView.setToVisible()
-                    mAdapter.populateData(it.episodeList)
+                    mAdapter.populateData(it.episodes)
                 }
 
                 videoUrl.observe(this@StreamActivity) {
@@ -127,8 +130,8 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
 
     private fun updateDataAndLoadVideo(endpoint: String, position: Int) {
         viewModel.apply {
-            binding.tvInfo.text = "Currently watching episode ${animeDetail.value!!.episodeList[position].episodeForUi}"
-            sharedPref.edit().putInt(animeDetail.value!!.internalId, position).apply()
+            binding.tvInfo.text = "Currently watching episode ${animeDetail.value!!.episodes[position].text}"
+            sharedPref.edit().putInt(animeDetail.value!!.id.toString(), position).apply()
 
             currentSelectedEpisodeIndex = position
             getVideoUrl(endpoint)
@@ -222,8 +225,14 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
     private fun retrieveIntentData() {
         viewModel.apply {
             intent.apply {
-                id = getStringExtra(Constants.ID)
-                isInternalId = getBooleanExtra(Constants.IS_INTERNAL_ID, false)
+                detailAltTitle = getStringExtra(Constants.DETAIL_ALT_TITLE)
+                detailAltEndpoint = getStringExtra(Constants.DETAIL_ALT_ENDPOINT)
+                animeID = getIntExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, -1)
+            }
+
+            val doHideBookmarkButton = (animeID == -1)
+            if (doHideBookmarkButton) {
+                binding.fabBookmark.setToGone()
             }
 
             getAnimeDetail()
@@ -238,8 +247,8 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
                 tvAnimeDetailType.text = type
                 tvAnimeDetailSummary.text = "Summary: $summary"
                 tvAnimeDetailGenre.text = "Genre: $genre"
-                tvAnimeDetailReleased.text = "Released: $releasedDate"
-                tvAnimeDetailStatus.text = "Airing status: $airingStatus"
+                tvAnimeDetailReleased.text = "Released: $airingYear"
+                tvAnimeDetailStatus.text = "Airing status: $status"
             }
         }
     }

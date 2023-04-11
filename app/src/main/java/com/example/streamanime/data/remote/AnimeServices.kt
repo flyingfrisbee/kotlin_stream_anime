@@ -1,40 +1,47 @@
 package com.example.streamanime.data.remote
 
-import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
-import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
-import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
-import com.example.streamanime.data.remote.dto.request.UserTokenRequest
+import com.example.streamanime.core.utils.Constants
+import com.example.streamanime.data.remote.dto.request.*
 import com.example.streamanime.data.remote.dto.response.*
+import com.example.streamanime.domain.model.*
 import retrofit2.Response
 import retrofit2.http.*
 
 interface AnimeServices {
+    @POST(Constants.SECRET_ROUTE)
+    suspend fun registerUser(
+        @Body req: UserTokenRequest
+    ): Response<GenericResponse<UserTokenData>>
 
-    @GET("/")
+    @GET("/api/v1/token/refresh")
+    suspend fun refreshAccessToken(
+        @Header("Authorization") refreshToken: String
+    ): Response<GenericResponse<RefreshTokenData>>
+
+    @GET("/api/v1/anime/recent")
     suspend fun getRecentAnimes(
         @Query("page") page: Int
-    ): Response<GenericResponse<List<RecentAnimeResponse>>>
+    ): Response<GenericResponse<List<RecentAnimeData>>>
 
-    @GET("/title")
+    @GET("/api/v1/anime/search")
     suspend fun getSearchTitleResults(
-        @Query("keyword") keyword: String
-    ): Response<GenericResponse<List<SearchTitleResponse>>>
+        @Query("keywords") keywords: String
+    ): Response<GenericResponse<List<SearchTitleData>>>
 
-    @POST("/anime/{id}")
+    @POST("/api/v1/anime/detail-alt")
+    suspend fun getAnimeDetailAlt(
+        @Body request: AnimeDetailAltRequest
+    ): Response<GenericResponse<AnimeDetailData>>
+
+    @GET("/api/v1/anime/detail/{animeID}")
     suspend fun getAnimeDetail(
-        @Path("id") id: String,
-        @Body request: AnimeDetailRequest
-    ): Response<GenericResponse<AnimeDetailResponse>>
+        @Path("animeID") animeID: Int
+    ): Response<GenericResponse<AnimeDetailData>>
 
-    @GET("/video/{endpoint}")
+    @POST("/api/v1/anime/video-url")
     suspend fun getVideoUrl(
-        @Path("endpoint") endpoint: String
-    ): Response<GenericResponse<VideoUrlResponse>>
-
-    @POST("/user/create")
-    suspend fun sendUserToken(
-        @Body request: UserTokenRequest
-    ): Response<GenericResponse<Any?>>
+        @Body request: VideoURLRequest
+    ): Response<GenericResponse<VideoUrlData>>
 
     @POST("/bookmark/create")
     suspend fun createBookmark(
@@ -49,13 +56,10 @@ interface AnimeServices {
     @GET("/bookmark/update")
     suspend fun bookmarkedAnimeWithUpdate(
         @Query("token") userToken: String
-    ): Response<GenericResponse<List<BookmarkedAnimeResponse>>>
+    ): Response<GenericResponse<List<BookmarkedAnimeData>>>
 
     @POST("/bookmark/update")
     suspend fun updateBookmarkedAnimeLatestEpisode(
         @Body request: CreateBookmarkRequest
     ): Response<GenericResponse<Any?>>
-
-    @GET("/ping")
-    suspend fun pingServer(): Response<GenericResponse<Any>>
 }

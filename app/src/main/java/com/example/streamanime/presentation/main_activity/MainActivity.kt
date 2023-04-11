@@ -23,8 +23,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private val viewModel: MainViewModel by viewModels()
-    @Inject
-    lateinit var launchExactAlarm: ExactAlarm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +34,6 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         makeStatusBarTextVisible(true)
-
-        launchExactAlarm()
 
         binding.apply {
             viewModel.apply {

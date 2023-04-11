@@ -12,5 +12,5 @@ interface BookmarkServicesRepository {
 
     suspend fun getBookmarkedAnimes(): List<BookmarkedAnimeData>
 
-    suspend fun updateField(internalId: String)
+    suspend fun updateField(id: Int)
 }

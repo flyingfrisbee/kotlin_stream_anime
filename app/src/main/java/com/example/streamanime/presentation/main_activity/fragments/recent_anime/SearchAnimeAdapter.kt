@@ -36,7 +36,7 @@ class SearchAnimeAdapter(
     }
 
     interface OnSearchResultListener {
-        fun onTitleClicked(animeId: String)
+        fun onTitleClicked(title: String, endpoint: String)
     }
 
     inner class ViewHolder(private val binding: ItemSearchAnimeBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -44,7 +44,7 @@ class SearchAnimeAdapter(
             binding.apply {
                 tvSearchAnimeTitle.text = data.title
                 clRoot.setOnClickListener {
-                    onSearchResultListener.onTitleClicked(data.animeId)
+                    onSearchResultListener.onTitleClicked(data.title, data.endpoint)
                 }
             }
         }

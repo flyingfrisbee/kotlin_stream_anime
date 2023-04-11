@@ -21,7 +21,7 @@ interface BookmarkDao {
     @Query(
         "UPDATE BookmarkedAnimeData " +
         "SET haveNewUpdate = :newUpdate " +
-        "WHERE internal_id = :internalId"
+        "WHERE id = :id"
     )
-    suspend fun updateField(internalId: String, newUpdate: Boolean = false)
+    suspend fun updateField(id: Int, newUpdate: Boolean = false)
 }

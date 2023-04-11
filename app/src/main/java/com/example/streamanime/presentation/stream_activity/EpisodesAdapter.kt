@@ -48,7 +48,7 @@ class EpisodesAdapter(
                 } else {
                     btnEpisode.setBackgroundColor(Color.parseColor("#FFFFFF"))
                 }
-                btnEpisode.text = "Episode\n${data.episodeForUi}"
+                btnEpisode.text = "Episode\n${data.text}"
                 btnEpisode.setOnClickListener {
                     val index = listContainer.indexOfFirst { it.clicked }
                     if (index != -1) {
@@ -57,7 +57,7 @@ class EpisodesAdapter(
                     }
                     data.clicked = true
                     notifyItemChanged(position)
-                    onEpisodeClickListener.onClicked(data.episodeForEndpoint, position)
+                    onEpisodeClickListener.onClicked(data.endpoint, position)
                 }
             }
         }

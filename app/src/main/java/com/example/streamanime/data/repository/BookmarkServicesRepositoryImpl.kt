@@ -20,7 +20,7 @@ class BookmarkServicesRepositoryImpl @Inject constructor(
         return dao.getBookmarkedAnimes()
     }
 
-    override suspend fun updateField(internalId: String) {
-        dao.updateField(internalId)
+    override suspend fun updateField(id: Int) {
+        dao.updateField(id)
     }
 }

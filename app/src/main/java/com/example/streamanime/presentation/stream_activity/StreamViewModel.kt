@@ -6,8 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.streamanime.core.utils.Constants.FCM_TOKEN
-import com.example.streamanime.data.remote.dto.request.AnimeDetailRequest
+import com.example.streamanime.data.remote.dto.request.AnimeDetailAltRequest
 import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
+import com.example.streamanime.data.remote.dto.request.VideoURLRequest
 import com.example.streamanime.domain.model.AnimeDetailData
 import com.example.streamanime.domain.model.BookmarkedAnimeData
 import com.example.streamanime.domain.model.enumerate.LoadingType
@@ -17,6 +18,7 @@ import com.example.streamanime.domain.repository.BookmarkServicesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,16 +43,36 @@ class StreamViewModel @Inject constructor(
         _errorMessage.value = ""
     }
 
-    var id: String? = null
-    var isInternalId = false
+    var detailAltTitle: String? = null
+    var detailAltEndpoint: String? = null
+    var animeID: Int = -1
 
     private val _animeDetail = MutableLiveData<AnimeDetailData>()
     val animeDetail: LiveData<AnimeDetailData> = _animeDetail
 
     fun getAnimeDetail() = viewModelScope.launch {
+        // For detail alt
+        detailAltTitle?.let {
+            remoteRepo.getAnimeDetailAlt(AnimeDetailAltRequest(
+                endpoint = detailAltEndpoint!!,
+                title = detailAltTitle!!,
+            )).collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        _animeDetail.value = resource.data!!
+                    }
+                    is Resource.Error -> {
+                        insertErrorMessage(resource.msg!!)
+                    }
+                    else -> { changeLoadingValue(LoadingType.LoadAnimeDetail(true)) }
+                }
+            }
+            changeLoadingValue(LoadingType.LoadAnimeDetail(false))
+            return@launch
+        }
+        // For detail from DB
         remoteRepo.getAnimeDetail(
-            id!!,
-            AnimeDetailRequest(isInternalId)
+            animeID
         ).collect { resource ->
             when (resource) {
                 is Resource.Success -> {
@@ -74,7 +96,9 @@ class StreamViewModel @Inject constructor(
         getVideoUrlJob?.cancel()
         getVideoUrlJob = viewModelScope.launch {
             delay(1000L)
-            remoteRepo.getVideoUrl(endpoint).collect { resource ->
+            remoteRepo.getVideoUrl(
+                VideoURLRequest(endpoint)
+            ).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
                         _videoUrl.value = resource.data!!.videoUrl
@@ -95,19 +119,19 @@ class StreamViewModel @Inject constructor(
         animeDetail.value!!.apply {
             remoteRepo.createBookmark(
                 CreateBookmarkRequest(
-                    internalId = internalId,
-                    latestEpisode = if (episodeList.isNotEmpty()) episodeList.last().episodeForUi else "0",
-                    userToken = sharedPref.getString(FCM_TOKEN, null) ?: ""
+                    animeId = this.id,
+                    latestEpisode = this.latestEpisode,
+                    userToken = sharedPref.getString(FCM_TOKEN, null) ?: "",
                 )
             ).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
                         localRepo.insertBookmarkAnime(
                             BookmarkedAnimeData(
-                                internalId = internalId,
-                                title = title,
-                                imageUrl = imageUrl,
-                                latestEpisode = latestEpisode,
+                                id = this.id,
+                                title = this.title,
+                                imageUrl = this.imageUrl,
+                                latestEpisode = this.latestEpisode,
                                 timestamp = System.currentTimeMillis()
                             )
                         )

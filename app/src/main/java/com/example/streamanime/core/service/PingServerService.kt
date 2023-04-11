@@ -22,7 +22,7 @@ class PingServerService: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         runBlocking {
-            val a = remoteRepo.pingServer()
+//            val a = remoteRepo.pingServer()
         }
         launchExactAlarm()
         return START_STICKY

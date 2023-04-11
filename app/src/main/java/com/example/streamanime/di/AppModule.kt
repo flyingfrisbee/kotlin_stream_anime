@@ -44,7 +44,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAnimeApi(): AnimeServices {
+    fun provideAnimeApi(sharedPref: SharedPreferences): AnimeServices {
         val okHttpBuilder = OkHttpClient.Builder()
 
         if (BuildConfig.DEBUG) {
@@ -54,7 +54,8 @@ object AppModule {
             okHttpBuilder.addInterceptor(logging)
         }
 
-        okHttpBuilder.addInterceptor(handleRedirectInterceptor())
+        okHttpBuilder.addInterceptor(handleRedirectInterceptor(sharedPref))
+        okHttpBuilder.authenticator(Auth(sharedPref))
 
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)

@@ -1,8 +1,9 @@
-package com.example.streamanime.domain.model
+package com.example.streamanime.data.remote.dto.request
+
 
 import com.google.gson.annotations.SerializedName
 
-data class SearchTitleData(
+data class AnimeDetailAltRequest(
     @SerializedName("endpoint")
     val endpoint: String,
     @SerializedName("title")

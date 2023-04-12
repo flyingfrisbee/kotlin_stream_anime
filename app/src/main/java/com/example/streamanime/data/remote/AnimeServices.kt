@@ -13,9 +13,10 @@ interface AnimeServices {
         @Body req: UserTokenRequest
     ): Response<GenericResponse<UserTokenData>>
 
-    @GET("/api/v1/token/refresh")
+    @GET
     suspend fun refreshAccessToken(
-        @Header("Authorization") refreshToken: String
+        @Header("Authorization") refreshToken: String,
+        @Url rawURL: String,
     ): Response<GenericResponse<RefreshTokenData>>
 
     @GET("/api/v1/anime/recent")

@@ -15,6 +15,7 @@ import com.example.streamanime.core.utils.Constants.REFRESH_TOKEN
 import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.UserTokenRequest
+import com.example.streamanime.di.shouldUseBaseURL
 import com.example.streamanime.domain.model.BookmarkedAnimeData
 import com.example.streamanime.domain.model.RecentAnimeData
 import com.example.streamanime.domain.model.SearchTitleData
@@ -22,10 +23,10 @@ import com.example.streamanime.domain.model.enumerate.Resource
 import com.example.streamanime.domain.repository.AnimeServicesRepository
 import com.example.streamanime.domain.repository.BookmarkServicesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -297,9 +298,36 @@ class MainViewModel @Inject constructor(
         return eventPosition
     }
 
-    init {
+    var networkChecked = false
+    private fun checkNetwork() = viewModelScope.launch {
+        if (networkChecked) {
+            return@launch
+        }
+
+        withContext(Dispatchers.IO) {
+            val client = OkHttpClient()
+            val req = Request.Builder()
+                .addHeader("Authorization", "Bearer ehe")
+                .url("${Constants.SECOND_BASE_URL}/api/v1/anime/recent")
+                .build()
+            try {
+                val resp = client.newCall(req).execute()
+                if (resp.code != 401) {
+                    shouldUseBaseURL = false
+                }
+                resp.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        networkChecked = true
         getRecentAnimes()
         sendTokenToServer()
+    }
+
+    init {
+        checkNetwork()
 //        getUpdatedBookmarkedAnimes()
     }
 }

@@ -1,28 +1,21 @@
 package com.example.streamanime.di
 
 import android.content.SharedPreferences
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.streamanime.core.utils.Constants
 import com.example.streamanime.data.remote.AnimeServices
-import com.example.streamanime.domain.model.enumerate.Resource
-import com.example.streamanime.domain.repository.AnimeServicesRepository
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLConnection
 import javax.inject.Inject
+
+var shouldUseBaseURL = true
 
 class Auth @Inject constructor(
     private val sharedPref: SharedPreferences
 ): Authenticator {
     val retrofit = Retrofit.Builder()
-        .baseUrl(Constants.BASE_URL)
+        .baseUrl(Constants.BASE_URL) // Will be ignored
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(AnimeServices::class.java)
@@ -32,7 +25,13 @@ class Auth @Inject constructor(
         val refreshToken = sharedPref.getString(Constants.REFRESH_TOKEN, null)!!
 
         runBlocking {
-            val resource = retrofit.refreshAccessToken("Bearer $refreshToken")
+            val url = if (shouldUseBaseURL) {
+                "${Constants.BASE_URL}/api/v1/token/refresh"
+            } else {
+                "${Constants.SECOND_BASE_URL}/api/v1/token/refresh"
+            }
+
+            val resource = retrofit.refreshAccessToken("Bearer $refreshToken", url)
             resource.body()?.let {
                 token = it.data.authToken
                 sharedPref.edit().putString(Constants.ACCESS_TOKEN, token).apply()
@@ -48,21 +47,30 @@ class Auth @Inject constructor(
 
 fun handleRedirectInterceptor(sharedPref: SharedPreferences): Interceptor {
     return Interceptor { chain ->
-        var request: Request = chain.request()
-        sharedPref.getString(Constants.ACCESS_TOKEN, null)?.let {
-            request = chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer " + it)
-                .build()
-        }
-        var response: Response = chain.proceed(request)
-        if (response.code != 200 && response.code != 401 && !request.url.toString().contains(Constants.SECOND_BASE_URL)) {
+        var response = sendRequest(chain, sharedPref)
+
+        if (response.code != 200 && response.code != 401) {
+            shouldUseBaseURL = !shouldUseBaseURL
             response.close()
-            request = request.newBuilder()
-                .url(request.url.toString().replace(Constants.BASE_URL, Constants.SECOND_BASE_URL))
-                .build()
-            response = chain.proceed(request)
+            response = sendRequest(chain, sharedPref)
         }
         response
     }
+}
+
+fun sendRequest(chain: Interceptor.Chain, sharedPref: SharedPreferences): Response {
+    var request: Request = chain.request()
+    val accessToken = sharedPref.getString(Constants.ACCESS_TOKEN, null)
+    accessToken?.let {
+        request = chain.request().newBuilder()
+            .addHeader("Authorization", "Bearer " + it)
+            .build()
+    }
+    if (!shouldUseBaseURL) {
+        request = request.newBuilder()
+            .url(request.url.toString().replace(Constants.BASE_URL, Constants.SECOND_BASE_URL))
+            .build()
+    }
+    return chain.proceed(request)
 }
 

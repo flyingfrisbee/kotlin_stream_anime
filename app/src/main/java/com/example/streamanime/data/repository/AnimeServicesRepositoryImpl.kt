@@ -172,12 +172,12 @@ class AnimeServicesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createBookmark(request: CreateBookmarkRequest): Flow<Resource<Any?>> {
+    override suspend fun addToBookmark(request: AddBookmarkRequest): Flow<Resource<Any?>> {
         return flow {
             emit(Resource.Loading())
 
             val response = try {
-                api.createBookmark(request)
+                api.addToBookmark(request)
             } catch (e: Exception) {
                 emit(Resource.Error("No internet connection"))
                 null
@@ -222,12 +222,12 @@ class AnimeServicesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun bookmarkedAnimeWithUpdate(userToken: String): Flow<Resource<List<BookmarkedAnimeData>>> {
+    override suspend fun syncBookmarkRequest(request: SyncBookmarkRequest): Flow<Resource<List<SyncBookmarkData>>> {
         return flow {
             emit(Resource.Loading())
 
             val response = try {
-                api.bookmarkedAnimeWithUpdate(userToken)
+                api.syncBookmarkRequest(request)
             } catch (e: Exception) {
                 emit(Resource.Error("No internet connection"))
                 null
@@ -236,31 +236,9 @@ class AnimeServicesRepositoryImpl @Inject constructor(
             response?.let {
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
-                    emit(Resource.Success(body.data))
-                } else {
-                    try {
-                        val errorResult = Gson().fromJson(response.errorBody()?.charStream(), GenericResponse::class.java)
-                        emit(Resource.Error(errorResult.message))
-                    } catch (e: Exception) {}
-                }
-            }
-        }
-    }
-
-    override suspend fun updateBookmarkedAnimeLatestEpisode(request: CreateBookmarkRequest): Flow<Resource<Any?>> {
-        return flow {
-            emit(Resource.Loading())
-
-            val response = try {
-                api.updateBookmarkedAnimeLatestEpisode(request)
-            } catch (e: Exception) {
-                emit(Resource.Error("No internet connection"))
-                null
-            }
-
-            response?.let {
-                val body = response.body()
-                if (response.isSuccessful && body != null) {
+                    for (anime in body.data) {
+                        anime.getTimestamp()
+                    }
                     emit(Resource.Success(body.data))
                 } else {
                     try {

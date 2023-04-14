@@ -39,11 +39,26 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:clickable="true"
+                android:visibility="gone"
                 app:backgroundTint="#2E5163"
                 app:layout_constraintBottom_toBottomOf="@+id/ivAnimeDetailImage"
                 app:layout_constraintEnd_toEndOf="@+id/ivAnimeDetailImage"
                 app:srcCompat="@drawable/ic_bookmark"
                 app:tint="#3A8AAE" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabDeleteBookmark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:visibility="gone"
+                app:backgroundTint="#FD5B6E"
+                app:layout_constraintBottom_toBottomOf="@+id/ivAnimeDetailImage"
+                app:layout_constraintEnd_toEndOf="@+id/ivAnimeDetailImage"
+                app:srcCompat="@drawable/ic_delete"
+                app:tint="#9A1D36" />
 
             <TextView
                 android:id="@+id/tvAnimeDetailTitle"

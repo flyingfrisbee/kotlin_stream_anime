@@ -11,7 +11,8 @@ data class BookmarkedAnimeData(
     val id: Int,
     val title: String,
     val imageUrl: String,
-    val latestEpisode: String,
-    val timestamp: Long,
+    val latestEpisodeLocal: String,
+    val latestEpisodeRemote: String,
+    val updatedAtTimestamp: Long,
     val haveNewUpdate: Boolean = false,
 )

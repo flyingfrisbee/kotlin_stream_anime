@@ -6,8 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.streamanime.core.utils.Constants.FCM_TOKEN
+import com.example.streamanime.data.remote.dto.request.AddBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.AnimeDetailAltRequest
-import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
+import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.VideoURLRequest
 import com.example.streamanime.domain.model.AnimeDetailData
 import com.example.streamanime.domain.model.BookmarkedAnimeData
@@ -46,6 +47,13 @@ class StreamViewModel @Inject constructor(
     var detailAltTitle: String? = null
     var detailAltEndpoint: String? = null
     var animeID: Int = -1
+
+    private val _animeIsBookmarked = MutableLiveData<Boolean>()
+    val animeIsBookmarked: LiveData<Boolean> = _animeIsBookmarked
+
+    fun setStatus(isBookmarked: Boolean) = viewModelScope.launch {
+        _animeIsBookmarked.value = isBookmarked
+    }
 
     private val _animeDetail = MutableLiveData<AnimeDetailData>()
     val animeDetail: LiveData<AnimeDetailData> = _animeDetail
@@ -117,8 +125,8 @@ class StreamViewModel @Inject constructor(
 
     fun bookmarkAnime() = viewModelScope.launch {
         animeDetail.value!!.apply {
-            remoteRepo.createBookmark(
-                CreateBookmarkRequest(
+            remoteRepo.addToBookmark(
+                AddBookmarkRequest(
                     animeId = this.id,
                     latestEpisode = this.latestEpisode,
                     userToken = sharedPref.getString(FCM_TOKEN, null) ?: "",
@@ -131,13 +139,39 @@ class StreamViewModel @Inject constructor(
                                 id = this.id,
                                 title = this.title,
                                 imageUrl = this.imageUrl,
-                                latestEpisode = this.latestEpisode,
-                                timestamp = System.currentTimeMillis()
+                                latestEpisodeLocal = this.latestEpisode,
+                                latestEpisodeRemote = this.latestEpisode,
+                                updatedAtTimestamp = updatedAtTimestamp ?: 0,
                             )
                         )
 
                         _successBookmark.value = "Success bookmark $title"
                         _successBookmark.value = ""
+                        _animeIsBookmarked.value = !animeIsBookmarked.value!!
+                    }
+                    is Resource.Error -> {
+                        insertErrorMessage(resource.msg!!)
+                    }
+                    else -> { changeLoadingValue(LoadingType.BookmarkAnime(true)) }
+                }
+            }
+            changeLoadingValue(LoadingType.BookmarkAnime(false))
+        }
+    }
+
+    fun unbookmarkAnime() = viewModelScope.launch {
+        animeDetail.value!!.apply {
+            remoteRepo.deleteBookmark(
+                DeleteBookmarkRequest(
+                    animeId = this.id,
+                    userToken = sharedPref.getString(FCM_TOKEN, null) ?: "",
+                )
+            ).collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        localRepo.deleteBookmarkedAnime(this.id)
+                        _successBookmark.value = "Success removing $title from bookmarked list"
+                        _animeIsBookmarked.value = !animeIsBookmarked.value!!
                     }
                     is Resource.Error -> {
                         insertErrorMessage(resource.msg!!)

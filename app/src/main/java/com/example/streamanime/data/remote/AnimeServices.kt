@@ -44,23 +44,18 @@ interface AnimeServices {
         @Body request: VideoURLRequest
     ): Response<GenericResponse<VideoUrlData>>
 
-    @POST("/bookmark/create")
-    suspend fun createBookmark(
-        @Body request: CreateBookmarkRequest
+    @POST("/api/v1/bookmark")
+    suspend fun addToBookmark(
+        @Body request: AddBookmarkRequest
     ): Response<GenericResponse<Any?>>
 
-    @POST("/bookmark/delete")
+    @POST("/api/v1/bookmark/delete")
     suspend fun deleteBookmark(
         @Body request: DeleteBookmarkRequest
     ): Response<GenericResponse<Any?>>
 
-    @GET("/bookmark/update")
-    suspend fun bookmarkedAnimeWithUpdate(
-        @Query("token") userToken: String
-    ): Response<GenericResponse<List<BookmarkedAnimeData>>>
-
-    @POST("/bookmark/update")
-    suspend fun updateBookmarkedAnimeLatestEpisode(
-        @Body request: CreateBookmarkRequest
-    ): Response<GenericResponse<Any?>>
+    @POST("/api/v1/anime/sync")
+    suspend fun syncBookmarkRequest(
+        @Body request: SyncBookmarkRequest
+    ): Response<GenericResponse<List<SyncBookmarkData>>>
 }

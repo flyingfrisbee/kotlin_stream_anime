@@ -1,8 +1,9 @@
 package com.example.streamanime.data.remote.dto.request
 
+
 import com.google.gson.annotations.SerializedName
 
-data class CreateBookmarkRequest(
+data class AddBookmarkRequest(
     @SerializedName("anime_id")
     val animeId: Int,
     @SerializedName("latest_episode")

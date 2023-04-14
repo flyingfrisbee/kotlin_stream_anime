@@ -98,8 +98,11 @@ class RecentAnimeFragment
                 getBookmarkedAnime()
             }
         }
+        val isBookmarked = (viewModel.bookmarkedAnimes.value!!.firstOrNull { it.id == id } != null)
+
         val intent = Intent(requireContext(), StreamActivity::class.java)
         intent.putExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, id)
+        intent.putExtra(Constants.ANIME_IS_BOOKMARKED, isBookmarked)
         startActivity(intent)
     }
 

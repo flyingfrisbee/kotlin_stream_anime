@@ -34,19 +34,31 @@ interface AnimeServicesRepository {
         request: VideoURLRequest
     ): Flow<Resource<VideoUrlData>>
 
-    suspend fun createBookmark(
-        request: CreateBookmarkRequest
+    suspend fun addToBookmark(
+        request: AddBookmarkRequest
     ): Flow<Resource<Any?>>
 
     suspend fun deleteBookmark(
         request: DeleteBookmarkRequest
     ): Flow<Resource<Any?>>
 
-    suspend fun bookmarkedAnimeWithUpdate(
-        @Query("token") userToken: String
-    ): Flow<Resource<List<BookmarkedAnimeData>>>
+    suspend fun syncBookmarkRequest(
+        request: SyncBookmarkRequest
+    ): Flow<Resource<List<SyncBookmarkData>>>
 
-    suspend fun updateBookmarkedAnimeLatestEpisode(
-        request: CreateBookmarkRequest
-    ): Flow<Resource<Any?>>
+//    suspend fun createBookmark(
+//        request: CreateBookmarkRequest
+//    ): Flow<Resource<Any?>>
+//
+//    suspend fun deleteBookmark(
+//        request: DeleteBookmarkRequest
+//    ): Flow<Resource<Any?>>
+//
+//    suspend fun bookmarkedAnimeWithUpdate(
+//        @Query("token") userToken: String
+//    ): Flow<Resource<List<BookmarkedAnimeData>>>
+//
+//    suspend fun updateBookmarkedAnimeLatestEpisode(
+//        request: CreateBookmarkRequest
+//    ): Flow<Resource<Any?>>
 }

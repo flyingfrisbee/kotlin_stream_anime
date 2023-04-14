@@ -12,10 +12,10 @@ import com.example.streamanime.core.utils.Constants
 import com.example.streamanime.core.utils.Constants.ACCESS_TOKEN
 import com.example.streamanime.core.utils.Constants.FCM_TOKEN
 import com.example.streamanime.core.utils.Constants.REFRESH_TOKEN
-import com.example.streamanime.data.remote.dto.request.CreateBookmarkRequest
+import com.example.streamanime.data.remote.dto.request.AddBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.DeleteBookmarkRequest
+import com.example.streamanime.data.remote.dto.request.SyncBookmarkRequest
 import com.example.streamanime.data.remote.dto.request.UserTokenRequest
-import com.example.streamanime.di.shouldUseBaseURL
 import com.example.streamanime.domain.model.BookmarkedAnimeData
 import com.example.streamanime.domain.model.RecentAnimeData
 import com.example.streamanime.domain.model.SearchTitleData
@@ -25,8 +25,6 @@ import com.example.streamanime.domain.repository.BookmarkServicesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -172,7 +170,6 @@ class MainViewModel @Inject constructor(
     }
 
     // bookmarked anime fragment
-
     private val _bookmarkLoading = MutableLiveData(false)
     val bookmarkLoading: LiveData<Boolean> = _bookmarkLoading
 
@@ -184,35 +181,39 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getUpdatedBookmarkedAnimes() = viewModelScope.launch {
-        sharedPref.getString(FCM_TOKEN, null)?.let {
-            remoteRepo.bookmarkedAnimeWithUpdate(it).collect { resource ->
-                when (resource) {
-                    is Resource.Success -> {
-                        if (resource.data!!.isNotEmpty()) {
-                            resource.data!!.forEach {
-                                localRepo.insertBookmarkAnime(it)
-                            }
+        getBookmarkedAnime()
+
+        val animeIDs = localRepo.getBookmarkedAnimes().map { it.id }
+        if (animeIDs.isEmpty()) {
+            return@launch
+        }
+        remoteRepo.syncBookmarkRequest(
+            SyncBookmarkRequest(animeIDs)
+        ).collect { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    if (resource.data!!.isNotEmpty()) {
+                        resource.data.forEach {
+                            localRepo.syncAnimeData(it.id, it.latestEpisode, it.updatedAtTimestamp)
                         }
-                        getBookmarkedAnime()
                     }
-                    is Resource.Error -> {
-                        insertErrorMessage(resource.msg!!)
-                    }
-                    else -> {}
+                    getBookmarkedAnime()
                 }
+                is Resource.Error -> {
+                    insertErrorMessage(resource.msg!!)
+                }
+                else -> {}
             }
-            delay(500L)
-            _bookmarkLoading.value = false
         }
     }
 
     fun insertToBookmark(data: BookmarkedAnimeData) = viewModelScope.launch {
         sharedPref.getString(FCM_TOKEN, null)?.let {
-            remoteRepo.createBookmark(
-                CreateBookmarkRequest(
+            remoteRepo.addToBookmark(
+                AddBookmarkRequest(
                     animeId = data.id,
-                    latestEpisode = data.latestEpisode,
-                    userToken = it
+                    latestEpisode = data.latestEpisodeLocal,
+                    userToken = it,
                 )
             ).collect { resource ->
                 when (resource) {
@@ -222,7 +223,9 @@ class MainViewModel @Inject constructor(
                     is Resource.Error -> {
                         insertErrorMessage(resource.msg!!)
                     }
-                    else -> { _bookmarkLoading.value = true }
+                    else -> {
+                        _bookmarkLoading.value = true
+                    }
                 }
             }
             delay(500L)
@@ -240,13 +243,15 @@ class MainViewModel @Inject constructor(
             ).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
-                        localRepo.deleteBookmarkedAnime(data)
+                        localRepo.deleteBookmarkedAnime(data.id)
                         onSuccess()
                     }
                     is Resource.Error -> {
                         insertErrorMessage(resource.msg!!)
                     }
-                    else -> { _bookmarkLoading.value = true }
+                    else -> {
+                        _bookmarkLoading.value = true
+                    }
                 }
             }
             delay(500L)
@@ -260,27 +265,12 @@ class MainViewModel @Inject constructor(
         bookmarkedAnimes.value?.let { animes ->
             val anime = animes.find { it.id == id }
             anime?.let {
-                remoteRepo.updateBookmarkedAnimeLatestEpisode(
-                    CreateBookmarkRequest(
-                        animeId = id,
-                        latestEpisode = it.latestEpisode,
-                        userToken = sharedPref.getString(FCM_TOKEN, null) ?: ""
-                    )
-                ).collect { resource ->
-                    when (resource) {
-                        is Resource.Success -> {
-                            localRepo.updateField(id)
-                            onSuccess()
-                        }
-                        is Resource.Error -> {
-                            insertErrorMessage(resource.msg!!)
-                        }
-                        else -> {}
-                    }
-                }
+                localRepo.updateField(id)
+                onSuccess()
             }
-            _bookmarkLoading.value = false
         }
+
+        _bookmarkLoading.value = false
     }
 
     private val background = ColorDrawable(Color.parseColor("#80D5D5D5"))
@@ -298,36 +288,9 @@ class MainViewModel @Inject constructor(
         return eventPosition
     }
 
-    var networkChecked = false
-    private fun checkNetwork() = viewModelScope.launch {
-        if (networkChecked) {
-            return@launch
-        }
-
-        withContext(Dispatchers.IO) {
-            val client = OkHttpClient()
-            val req = Request.Builder()
-                .addHeader("Authorization", "Bearer ehe")
-                .url("${Constants.SECOND_BASE_URL}/api/v1/anime/recent")
-                .build()
-            try {
-                val resp = client.newCall(req).execute()
-                if (resp.code != 401) {
-                    shouldUseBaseURL = false
-                }
-                resp.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        networkChecked = true
+    init {
         getRecentAnimes()
         sendTokenToServer()
-    }
-
-    init {
-        checkNetwork()
-//        getUpdatedBookmarkedAnimes()
+        getUpdatedBookmarkedAnimes()
     }
 }

@@ -28,7 +28,7 @@ data class AnimeDetailData(
     @SerializedName("updated_at")
     val updatedAt: String,
 
-    var updatedAtTimestamp: String? = null
+    var updatedAtTimestamp: Long? = null
 )
 
 data class EpisodeData(
@@ -42,6 +42,5 @@ data class EpisodeData(
 
 fun AnimeDetailData.getTimestamp() {
     val timeInMillis = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ").parse(this.updatedAt).time
-    val relativeTime = DateUtils.getRelativeTimeSpanString(timeInMillis, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
-    this.updatedAtTimestamp = relativeTime.toString()
+    this.updatedAtTimestamp = timeInMillis
 }

@@ -53,9 +53,20 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
                 retrieveIntentData()
 
                 fabBookmark.setOnClickListener {
-                    val canBookmark = (animeID != -1)
-                    if (canBookmark) {
-                        bookmarkAnime()
+                    bookmarkAnime()
+                }
+
+                fabDeleteBookmark.setOnClickListener {
+                    unbookmarkAnime()
+                }
+
+                animeIsBookmarked.observe(this@StreamActivity) { isBookmarked ->
+                    if (isBookmarked) {
+                        fabBookmark.setToGone()
+                        fabDeleteBookmark.setToVisible()
+                    } else {
+                        fabBookmark.setToVisible()
+                        fabDeleteBookmark.setToGone()
                     }
                 }
 
@@ -228,14 +239,16 @@ class StreamActivity : AppCompatActivity(), EpisodesAdapter.OnEpisodeClickListen
                 detailAltTitle = getStringExtra(Constants.DETAIL_ALT_TITLE)
                 detailAltEndpoint = getStringExtra(Constants.DETAIL_ALT_ENDPOINT)
                 animeID = getIntExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, -1)
-            }
 
-            val doHideBookmarkButton = (animeID == -1)
-            if (doHideBookmarkButton) {
-                binding.fabBookmark.setToGone()
-            }
+                // User came by clicking recent anime, not search bar
+                val animeCanBeBookmarked = (animeID != -1)
+                if (animeCanBeBookmarked) {
+                    val isBookmarked = getBooleanExtra(Constants.ANIME_IS_BOOKMARKED, false)
+                    setStatus(isBookmarked)
+                }
 
-            getAnimeDetail()
+                getAnimeDetail()
+            }
         }
     }
 

@@ -78,7 +78,7 @@ class BookmarkAnimeAdapter(
                 }
                 Glide.with(itemView).load(data.imageUrl).into(ivBookmarkPoster)
                 tvBookmarkTitle.text = data.title
-                tvBookmarkLatestEpisode.text = "Episode ${data.latestEpisode}"
+                tvBookmarkLatestEpisode.text = "Episode ${data.latestEpisodeLocal} / ${data.latestEpisodeRemote}"
                 clRoot.setOnClickListener {
                     onBookmarkClickListener.onBookmarkClicked(data)
                 }

@@ -7,9 +7,8 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import javax.inject.Inject
-
-var shouldUseBaseURL = true
 
 class Auth @Inject constructor(
     private val sharedPref: SharedPreferences
@@ -25,16 +24,33 @@ class Auth @Inject constructor(
         val refreshToken = sharedPref.getString(Constants.REFRESH_TOKEN, null)!!
 
         runBlocking {
-            val url = if (shouldUseBaseURL) {
-                "${Constants.BASE_URL}/api/v1/token/refresh"
-            } else {
-                "${Constants.SECOND_BASE_URL}/api/v1/token/refresh"
+            var url = "${Constants.BASE_URL}/api/v1/token/refresh"
+            try {
+                val resource = retrofit.refreshAccessToken("Bearer $refreshToken", url)
+                resource.body()?.let {
+                    token = it.data.authToken
+                    sharedPref.edit().putString(Constants.ACCESS_TOKEN, token).apply()
+                }
+            } catch (e: Exception) {
+                url = url.replace(Constants.BASE_URL, Constants.SECOND_BASE_URL)
+                val resource = retrofit.refreshAccessToken("Bearer $refreshToken", url)
+                resource.body()?.let {
+                    token = it.data.authToken
+                    sharedPref.edit().putString(Constants.ACCESS_TOKEN, token).apply()
+                }
             }
 
-            val resource = retrofit.refreshAccessToken("Bearer $refreshToken", url)
-            resource.body()?.let {
-                token = it.data.authToken
-                sharedPref.edit().putString(Constants.ACCESS_TOKEN, token).apply()
+            if (token.isEmpty()) {
+                url = if (url.contains(Constants.BASE_URL)) {
+                    url.replace(Constants.BASE_URL, Constants.SECOND_BASE_URL)
+                } else {
+                    url.replace(Constants.SECOND_BASE_URL, Constants.BASE_URL)
+                }
+                val resource = retrofit.refreshAccessToken("Bearer $refreshToken", url)
+                resource.body()?.let {
+                    token = it.data.authToken
+                    sharedPref.edit().putString(Constants.ACCESS_TOKEN, token).apply()
+                }
             }
         }
 
@@ -50,15 +66,14 @@ fun handleRedirectInterceptor(sharedPref: SharedPreferences): Interceptor {
         var response = sendRequest(chain, sharedPref)
 
         if (response.code != 200 && response.code != 401) {
-            shouldUseBaseURL = !shouldUseBaseURL
             response.close()
-            response = sendRequest(chain, sharedPref)
+            response = sendRequest(chain, sharedPref, true)
         }
         response
     }
 }
 
-fun sendRequest(chain: Interceptor.Chain, sharedPref: SharedPreferences): Response {
+fun sendRequest(chain: Interceptor.Chain, sharedPref: SharedPreferences, changeURL: Boolean = false): Response {
     var request: Request = chain.request()
     val accessToken = sharedPref.getString(Constants.ACCESS_TOKEN, null)
     accessToken?.let {
@@ -66,9 +81,15 @@ fun sendRequest(chain: Interceptor.Chain, sharedPref: SharedPreferences): Respon
             .addHeader("Authorization", "Bearer " + it)
             .build()
     }
-    if (!shouldUseBaseURL) {
+    if (changeURL) {
+        var url = request.url.toString()
+        if (url.contains(Constants.BASE_URL)) {
+            url = url.replace(Constants.BASE_URL, Constants.SECOND_BASE_URL)
+        } else {
+            url = url.replace(Constants.SECOND_BASE_URL, Constants.BASE_URL)
+        }
         request = request.newBuilder()
-            .url(request.url.toString().replace(Constants.BASE_URL, Constants.SECOND_BASE_URL))
+            .url(url)
             .build()
     }
     return chain.proceed(request)

@@ -18,6 +18,7 @@ import com.example.streamanime.presentation.main_activity.MainViewModel
 import com.example.streamanime.presentation.stream_activity.StreamActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import timber.log.Timber
 
 class BookmarkedAnimeFragment : BaseFragment<FragmentBookmarkedAnimeBinding>(), BookmarkAnimeAdapter.OnBookmarkClickListener {
 
@@ -131,9 +132,15 @@ class BookmarkedAnimeFragment : BaseFragment<FragmentBookmarkedAnimeBinding>(), 
     override fun onBookmarkClicked(data: BookmarkedAnimeData) {
         viewModel.updateField(data.id) {
             val intent = Intent(requireContext(), StreamActivity::class.java)
-            intent.putExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, id)
+            intent.putExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, data.id)
+            intent.putExtra(Constants.ANIME_IS_BOOKMARKED, true)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getBookmarkedAnime()
     }
 
     private fun initializeRecyclerView() {

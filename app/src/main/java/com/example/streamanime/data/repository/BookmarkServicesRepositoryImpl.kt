@@ -12,8 +12,8 @@ class BookmarkServicesRepositoryImpl @Inject constructor(
         dao.insertBookmarkAnime(data)
     }
 
-    override suspend fun deleteBookmarkedAnime(data: BookmarkedAnimeData) {
-        dao.deleteBookmarkedAnime(data)
+    override suspend fun deleteBookmarkedAnime(id: Int) {
+        dao.deleteBookmarkedAnime(id)
     }
 
     override suspend fun getBookmarkedAnimes(): List<BookmarkedAnimeData> {
@@ -22,5 +22,9 @@ class BookmarkServicesRepositoryImpl @Inject constructor(
 
     override suspend fun updateField(id: Int) {
         dao.updateField(id)
+    }
+
+    override suspend fun syncAnimeData(id: Int, latestEpisode: String, updatedAtTimestamp: Long) {
+        dao.syncAnimeData(id, latestEpisode, updatedAtTimestamp)
     }
 }

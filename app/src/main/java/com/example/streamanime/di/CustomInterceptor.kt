@@ -74,6 +74,7 @@ fun sendRequest(chain: Interceptor.Chain, sharedPref: SharedPreferences, changeU
     val accessToken = sharedPref.getString(Constants.ACCESS_TOKEN, null)
     accessToken?.let {
         request = chain.request().newBuilder()
+            .removeHeader("Authorization")
             .addHeader("Authorization", "Bearer " + it)
             .build()
     }

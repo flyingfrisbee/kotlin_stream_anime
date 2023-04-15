@@ -12,7 +12,7 @@ interface BookmarkServicesRepository {
 
     suspend fun getBookmarkedAnimes(): List<BookmarkedAnimeData>
 
-    suspend fun updateField(id: Int)
+    suspend fun updateField(id: Int, latestEpisode: String)
 
     suspend fun syncAnimeData(id: Int, latestEpisode: String, updatedAtTimestamp: Long)
 }

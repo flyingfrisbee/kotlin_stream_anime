@@ -20,8 +20,8 @@ class BookmarkServicesRepositoryImpl @Inject constructor(
         return dao.getBookmarkedAnimes()
     }
 
-    override suspend fun updateField(id: Int) {
-        dao.updateField(id)
+    override suspend fun updateField(id: Int, latestEpisode: String) {
+        dao.updateField(id, latestEpisode)
     }
 
     override suspend fun syncAnimeData(id: Int, latestEpisode: String, updatedAtTimestamp: Long) {

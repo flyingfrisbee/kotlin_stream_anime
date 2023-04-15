@@ -45,7 +45,7 @@ class RecentAnimeAdapter(
     }
 
     interface OnRecentAnimeListener {
-        fun onAnimeClicked(id: Int)
+        fun onAnimeClicked(id: Int, latestEpisode: String)
     }
 
     inner class ViewHolder(val binding: ItemRecentAnimeBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -53,7 +53,7 @@ class RecentAnimeAdapter(
             binding.apply {
                 data.apply {
                     clParent.setOnClickListener {
-                        onRecentAnimeListener.onAnimeClicked(id)
+                        onRecentAnimeListener.onAnimeClicked(id, latestEpisode)
                     }
 
                     Glide.with(binding.root).load(imageUrl).into(ivRecentAnime)

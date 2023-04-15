@@ -1,6 +1,7 @@
 package com.example.streamanime.domain.model
 
 import android.text.format.DateUtils
+import com.example.streamanime.core.utils.toTimestamp
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 
@@ -19,8 +20,8 @@ data class RecentAnimeData(
 )
 
 fun RecentAnimeData.getTimestamp() {
-    val timeInMillis = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ").parse(this.updatedAt).time
-    val relativeTime = DateUtils.getRelativeTimeSpanString(timeInMillis, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+    val timestamp = this.updatedAt.toTimestamp()
+    val relativeTime = DateUtils.getRelativeTimeSpanString(timestamp, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
     this.updatedAtTimestamp = relativeTime.toString()
 }
 

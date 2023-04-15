@@ -130,7 +130,7 @@ class BookmarkedAnimeFragment : BaseFragment<FragmentBookmarkedAnimeBinding>(), 
     }
 
     override fun onBookmarkClicked(data: BookmarkedAnimeData) {
-        viewModel.updateField(data.id) {
+        viewModel.updateField(data.id, data.latestEpisodeRemote) {
             val intent = Intent(requireContext(), StreamActivity::class.java)
             intent.putExtra(Constants.ANIME_ID_FOR_STREAM_ACTIVITY, data.id)
             intent.putExtra(Constants.ANIME_IS_BOOKMARKED, true)

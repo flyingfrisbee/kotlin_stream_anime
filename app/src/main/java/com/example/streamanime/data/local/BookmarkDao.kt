@@ -23,15 +23,17 @@ interface BookmarkDao {
     @Query(
         "UPDATE BookmarkedAnimeData " +
         "SET haveNewUpdate = 0 ," +
-        "latestEpisodeLocal = latestEpisodeRemote " +
+        "latestEpisodeLocal = :latestEpisode , " +
+        "latestEpisodeRemote = :latestEpisode " +
         "WHERE id = :id"
     )
-    suspend fun updateField(id: Int)
+    suspend fun updateField(id: Int, latestEpisode: String)
 
     @Query(
         "UPDATE BookmarkedAnimeData " +
         "SET latestEpisodeRemote = :latestEpisode , " +
-        "updatedAtTimestamp = :updatedAtTimestamp " +
+        "updatedAtTimestamp = :updatedAtTimestamp , " +
+        "haveNewUpdate = (CASE WHEN latestEpisodeLocal != :latestEpisode THEN 1 ELSE 0 END) " +
         "WHERE id = :id"
     )
     suspend fun syncAnimeData(id: Int, latestEpisode: String, updatedAtTimestamp: Long)

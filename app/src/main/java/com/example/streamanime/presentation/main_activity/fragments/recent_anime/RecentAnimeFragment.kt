@@ -91,10 +91,10 @@ class RecentAnimeFragment
         startActivity(intent)
     }
 
-    override fun onAnimeClicked(id: Int) {
+    override fun onAnimeClicked(id: Int, latestEpisode: String) {
         clearACTV()
         viewModel.apply {
-            updateField(id) {
+            updateField(id, latestEpisode) {
                 getBookmarkedAnime()
             }
         }

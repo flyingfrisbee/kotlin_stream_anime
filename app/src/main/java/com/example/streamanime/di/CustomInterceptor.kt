@@ -41,11 +41,7 @@ class Auth @Inject constructor(
             }
 
             if (token.isEmpty()) {
-                url = if (url.contains(Constants.BASE_URL)) {
-                    url.replace(Constants.BASE_URL, Constants.SECOND_BASE_URL)
-                } else {
-                    url.replace(Constants.SECOND_BASE_URL, Constants.BASE_URL)
-                }
+                url = url.replace(Constants.BASE_URL, Constants.SECOND_BASE_URL)
                 val resource = retrofit.refreshAccessToken("Bearer $refreshToken", url)
                 resource.body()?.let {
                     token = it.data.authToken

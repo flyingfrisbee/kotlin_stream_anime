@@ -259,13 +259,13 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updateField(id: Int, onSuccess: () -> Unit) = viewModelScope.launch {
+    fun updateField(id: Int, latestEpisode: String, onSuccess: () -> Unit) = viewModelScope.launch {
         _bookmarkLoading.value = true
 
         bookmarkedAnimes.value?.let { animes ->
             val anime = animes.find { it.id == id }
             anime?.let {
-                localRepo.updateField(id)
+                localRepo.updateField(id, latestEpisode)
                 onSuccess()
             }
         }

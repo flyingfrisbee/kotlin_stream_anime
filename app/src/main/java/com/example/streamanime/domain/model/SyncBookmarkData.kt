@@ -1,8 +1,7 @@
 package com.example.streamanime.domain.model
 
-import android.text.format.DateUtils
+import com.example.streamanime.core.utils.toTimestamp
 import com.google.gson.annotations.SerializedName
-import java.text.SimpleDateFormat
 
 data class SyncBookmarkData(
     @SerializedName("id")
@@ -16,6 +15,5 @@ data class SyncBookmarkData(
 )
 
 fun SyncBookmarkData.getTimestamp() {
-    val timeInMillis = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ").parse(this.updatedAt).time
-    this.updatedAtTimestamp = timeInMillis
+    this.updatedAtTimestamp = this.updatedAt.toTimestamp()
 }

@@ -1,6 +1,7 @@
 package com.example.streamanime.domain.model
 
 import android.text.format.DateUtils
+import com.example.streamanime.core.utils.toTimestamp
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 
@@ -41,6 +42,5 @@ data class EpisodeData(
 )
 
 fun AnimeDetailData.getTimestamp() {
-    val timeInMillis = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ").parse(this.updatedAt).time
-    this.updatedAtTimestamp = timeInMillis
+    this.updatedAtTimestamp = this.updatedAt.toTimestamp()
 }

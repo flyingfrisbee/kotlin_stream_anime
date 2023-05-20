@@ -27,6 +27,8 @@ class FcmMessagingEvent : FirebaseMessagingService() {
 
     @Inject
     lateinit var dao: BookmarkDao
+    private val generalNotificationChannel = "CHANNEL_ID"
+    private val codesNotificationChannel = "CODES_CHANNEL_ID"
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -34,6 +36,13 @@ class FcmMessagingEvent : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+
+        val redemptionCodes = message.data["codes"]
+        redemptionCodes?.let {
+            createCodesNotification(it)
+            return
+        }
+
         message.data.apply {
             val animeID = this["id"]!!
             val title = this["title"]!!
@@ -55,7 +64,7 @@ class FcmMessagingEvent : FirebaseMessagingService() {
         }
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
-        val builder = NotificationCompat.Builder(this, "CHANNEL_ID")
+        val builder = NotificationCompat.Builder(this, generalNotificationChannel)
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setContentTitle(title)
             .setContentText(body)
@@ -76,7 +85,40 @@ class FcmMessagingEvent : FirebaseMessagingService() {
             val name = "OP channel"
             val descriptionText = "Notification channel"
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel("CHANNEL_ID", name, importance).apply {
+            val channel = NotificationChannel(generalNotificationChannel, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createCodesNotification(codes: String) {
+        createCodesNotificationChannel()
+
+        val builder = NotificationCompat.Builder(this, codesNotificationChannel)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setContentTitle("New code is available to redeem")
+            .setContentText(codes)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(1, builder.build())
+        }
+    }
+
+    private fun createCodesNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Redemption codes channel"
+            val descriptionText = "Codes notification channel"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(codesNotificationChannel, name, importance).apply {
                 description = descriptionText
             }
             // Register the channel with the system

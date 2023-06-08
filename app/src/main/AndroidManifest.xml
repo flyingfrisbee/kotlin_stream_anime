@@ -47,7 +47,7 @@
 
         <service android:name=".core.service.PingServerService" />
 
-        <receiver android:name=".core.alarm.AlarmReceiver" />
+        <receiver android:name=".core.fcm.CopyReceiver" />
     </application>
 
 </manifest>

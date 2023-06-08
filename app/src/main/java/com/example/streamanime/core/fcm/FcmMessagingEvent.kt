@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.streamanime.R
@@ -15,11 +14,8 @@ import com.example.streamanime.data.local.BookmarkDao
 import com.example.streamanime.presentation.main_activity.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.google.firebase.messaging.ktx.remoteMessage
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -98,10 +94,15 @@ class FcmMessagingEvent : FirebaseMessagingService() {
     private fun createCodesNotification(codes: String) {
         createCodesNotificationChannel()
 
+        val copyIntent = Intent(this, CopyReceiver::class.java)
+        copyIntent.putExtra(TEXT_TO_COPY, codes)
+        val copyPendingIntent = PendingIntent.getBroadcast(this, 0, copyIntent, PendingIntent.FLAG_IMMUTABLE)
+
         val builder = NotificationCompat.Builder(this, codesNotificationChannel)
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setContentTitle("New code is available to redeem")
             .setContentText(codes)
+            .addAction(R.drawable.ic_copy, "Copy", copyPendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
@@ -126,5 +127,9 @@ class FcmMessagingEvent : FirebaseMessagingService() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    companion object {
+        const val TEXT_TO_COPY = "TEXT_TO_COPY"
     }
 }

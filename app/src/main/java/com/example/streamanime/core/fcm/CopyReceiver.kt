@@ -15,6 +15,6 @@ class CopyReceiver : BroadcastReceiver() {
         Toast.makeText(ctx, "Codes successfully copied to clipboard", Toast.LENGTH_SHORT).show()
 
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(1)
+        notificationManager.cancel(FcmMessagingEvent.codesNotificationID)
     }
 }

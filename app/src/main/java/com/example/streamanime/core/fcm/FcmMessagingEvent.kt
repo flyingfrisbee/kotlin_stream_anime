@@ -70,7 +70,7 @@ class FcmMessagingEvent : FirebaseMessagingService() {
 
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
-            notify(1, builder.build())
+            notify(generalNotificationID, builder.build())
         }
     }
 
@@ -108,7 +108,7 @@ class FcmMessagingEvent : FirebaseMessagingService() {
 
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
-            notify(1, builder.build())
+            notify(codesNotificationID, builder.build())
         }
     }
 
@@ -131,5 +131,7 @@ class FcmMessagingEvent : FirebaseMessagingService() {
 
     companion object {
         const val TEXT_TO_COPY = "TEXT_TO_COPY"
+        const val generalNotificationID = 1
+        const val codesNotificationID = 2
     }
 }
